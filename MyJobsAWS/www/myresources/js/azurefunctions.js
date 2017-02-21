@@ -8,7 +8,7 @@ function refreshToken(callback) {
         if (error != null) {
            // opMessage("refreshToken Failed " + error + " " + new Date());
             callback(error);
-            
+
         } else if (response.status !== 200) {
             //opMessage("refreshToken Failed " + response.status + " " + new Date());
             callback(response.status);
@@ -67,7 +67,7 @@ function logoutazure(callback) {
     mobileService.logout(function () {
         localStorage.setItem("token", null)
         localStorage.setItem("user", null)
-        
+
         var d = new Date();
         d.setDate(d.getDate() + 1);
         SetConfigParam('LastLogoff', d);
@@ -85,7 +85,7 @@ function logoutazureandrestart() {
         ref.close();
     });
 
-   
+
     mobileService.logout(function () {
         localStorage.setItem("token", null)
         localStorage.setItem("user", null)
@@ -97,9 +97,9 @@ function logoutazureandrestart() {
     });
 }
 function requestAzureUsername(callback) {
-   
+
  //   opMessage("requestAzureUsername  " + new Date());
-    
+
     if (localStorage.getItem("user") != null && localStorage.getItem("token")!=null) {
         var theuser = localStorage.getItem("user");
         var theToken = localStorage.getItem("token");
@@ -109,7 +109,7 @@ function requestAzureUsername(callback) {
     var d = new Date();
     if (Date.parse(localStorage.getItem('LASTTOKENREFRESH')) < d || mobileService.currentUser==null) {
      //   opMessage("requestAzureUsername  LASTTOKENREFRESH= " + localStorage.getItem('LASTTOKENREFRESH') + " " + new Date());
-       
+
         refreshOrLogin(function (result) {
             if (result == "SUCCESS") {
                // opMessage("requestAzureUsername refreshOrLogin SUCCESS " + new Date());
@@ -166,7 +166,7 @@ function getAzureUsername(callback) {
 }
 
 function checkAzureLogin() {
-	var username=""   
+	var username=""
 
 
     if (checkConnection() == false && localStorage.getItem('MobileUser').length == 0) {
@@ -174,10 +174,10 @@ function checkAzureLogin() {
     	busyDoingLogon.close();
     	return
     }
-   
+
 
     if (checkConnection() == true) {
-//Check         
+//Check
         mobileService = new WindowsAzure.MobileServiceClient(localStorage.getItem('ServerName'));
         var d = new Date()
         opMessage("SYNC:checkAzureLogin LastLogoff=" + localStorage.getItem('LastLogoff'));
@@ -197,7 +197,7 @@ function checkAzureLogin() {
     	formLogin.close()
     	busyDoingLogon.close();
     }
-   
+
 }
 
 function completeAzureLogin() {
@@ -229,11 +229,11 @@ function completeAzureLogin() {
 
 }
 function postAzureData(page, postData, timedOutSQL, recno) {
-   
+
     Postingazuredataflag = true;
     var myurl = localStorage.getItem('ServerName')+"/api/" + page + "?" + localStorage.getItem('MobileUser');
     opMessage("SYNC:UPLOAD SENDING DATA Calling postAzureData:" + myurl);
-setSyncingIndicator(true) 
+setSyncingIndicator(true)
     $.ajax({
         type: "POST",
         contentType: "application/json; charset=UTF-8",
@@ -251,7 +251,7 @@ setSyncingIndicator(true)
     }).fail(function (data, xhr, status) {
         opErrorMessage("Azure call failed" + page + xhr + status);
         Postingazuredataflag = false;
-        setSyncingIndicator(false) 
+        setSyncingIndicator(false)
 
         TimedOut = true;
         resetSENDINGData(timedOutSQL);
@@ -259,13 +259,13 @@ setSyncingIndicator(true)
 
     }).always(function () {
         Postingazuredataflag = false;
-        setSyncingIndicator(false) 
+        setSyncingIndicator(false)
     });
 }
 function postAzureDoc(page, postData, parameters, timedOutSQL, recno) {
     var myurl = localStorage.getItem('ServerName') + "/api/" + page + "?" + parameters;
     opMessage("SYNC:UPLOAD SENDING DATA in postAzureDoc:" + myurl);
-setSyncingIndicator(true) 
+setSyncingIndicator(true)
     $.ajax({
         type: "POST",
         contentType: "application/json; charset=UTF-8",
@@ -287,7 +287,7 @@ setSyncingIndicator(true)
 
         TimedOut = true;
         resetSENDINGData(timedOutSQL);
-       
+
 
 
     }).always(function () {
@@ -295,9 +295,9 @@ setSyncingIndicator(true)
     });
 }
 function requestAzureData(page, params) {
-	
+
     opMessage("SYNC:requestAzureData " + page + " " + params );
-    
+
     if (localStorage.getItem("user") != null && localStorage.getItem("token") != null) {
         var theuser = localStorage.getItem("user");
         var theToken = localStorage.getItem("token");
@@ -307,7 +307,7 @@ function requestAzureData(page, params) {
         var d = new Date()
     // if (Date.parse(localStorage.getItem('LASTTOKENREFRESH')) < d || mobileService.currentUser == null) {
        if(1==1){  //refresh token every time
-            
+
             refreshOrLogin(function (result) {
                 if (result == "SUCCESS") {
                     opMessage("SYNC:requestAzureData refreshOrLogin SUCCESS");
@@ -315,7 +315,7 @@ function requestAzureData(page, params) {
                     SetConfigParam('LASTTOKENREFRESH', d);
                 }
                 opMessage("SYNC:requestAzureData Calling getAzureData1");
-                
+
                 getAzureData(page, params);
             })
         }
@@ -397,8 +397,8 @@ function getAzureData(azurepage, params) {
 		}else{
 			chooseCB(data,page);
 		}
-       
-      
+
+
         setSyncingIndicator(false);
         setCounts();
     }).fail(function (data, xhr, status) {
@@ -427,7 +427,7 @@ function getAzureData(azurepage, params) {
 	    	iconsDownloadCnt=-1;
 	        downloadForms ()
 		}
-        
+
     }).always(function () {
         setSyncingIndicator(false)
     });
@@ -1162,16 +1162,16 @@ function ZGW_MAM30_DG5_PIA_CODES_T3Dg5RelCB(data) {
     }
 }
 /************************************************/
-/* Get Asset Data           
+/* Get Asset Data
             */
 /************************************************/
 /************************************************/
-/* Get Asset Data           
+/* Get Asset Data
             */
 /************************************************/
             var busyAssetDL = new sap.m.BusyDialog('busyAssetDL',{text:'Please Wait Initial Download', title: 'Assets',
             	onAfterRendering:function(){
-            	
+
             	}
             })
 function getAssets() {//The server keeps deleted records for MaxDaysSinceLastDownload  days (currently 90 days).
@@ -1198,11 +1198,11 @@ function getAssets() {//The server keeps deleted records for MaxDaysSinceLastDow
 
     getBiggestZequnr(function (BiggestZequnr) {
     	if(BiggestZequnr=="0"){
-    		
+
     		busyAssetDL.open()
     	}
     	if(BiggestZequnr=="999999999999999999"){
-    		
+
     		busyAssetDL.close()
     	}
         console.log("BiggestZequnr=" + BiggestZequnr);
@@ -1229,11 +1229,11 @@ function getAssets() {//The server keeps deleted records for MaxDaysSinceLastDow
                             //Get last equipment number
                             getBiggestZequnr(function (BiggestZequnr) {
                             	if(BiggestZequnr=="0"){
-                            		
+
                             		busyAssetDL.open()
                             	}
                             	if(BiggestZequnr=="999999999999999999"){
-                            		
+
                             		busyAssetDL.close()
                             	}
                                 console.log("BiggestZequnr=" + BiggestZequnr);
@@ -1275,7 +1275,7 @@ function getAssetsRecursive(currentEquipNum, numRecordsToGet) {
                 //Get last equipment number
                 getBiggestZequnr(function (BiggestZequnr) {
                     console.log(new Date() + " BiggestZequnr=" + BiggestZequnr);
-                    
+
                     if (BiggestZequnr == "999999999999999999") {
                         console.log("Finished getAssets ");
                         busyAssetDL.close()
@@ -1353,7 +1353,7 @@ function getAssetRecords(page, params, callback) {
 }
 
 function addRecordstoDb(data, initialLoad, callback) {
-   
+
     var sqlstatement = "";
 
     // var myarray = [{ 'sql': 'DELETE FROM MODEL', 'data': [] }];
@@ -1361,7 +1361,7 @@ function addRecordstoDb(data, initialLoad, callback) {
     var myDeleteSql = "select equnr from assetsitesdetails  limit 0;";
 
     for (var cntx = 0; cntx < data.length ; cntx++) {
-      
+
         if (initialLoad != true) {
             myDeleteSql += "DELETE FROM AssetSitesDetails WHERE equnr = '" + data[cntx].zequnr + "';";
         }
@@ -1730,32 +1730,32 @@ function ZGW_GET_JOB_DETAILSCB(data) {
         	[ data.tojob_order_ops.results[cntx].Order,data.tojob_order_ops.results[cntx].Operation,data.tojob_order_ops.results[cntx].CompDateTime,
         	  data.tojob_order_ops.results[cntx].Description,data.tojob_order_ops.results[cntx].Status,data.tojob_order_ops.results[cntx].Name ]
         	})
-        		  
+
         	}
         	  opMessage("toicon_priority:"+data.toicon_priority.results.length)
         	  for(var cntx=0; cntx < data.toicon_priority.results.length ; cntx++)
         	{
-        		 
+
         	myarray.push({
         	'sql': 'INSERT INTO MyJobDetsIconPriority ( orderno,opno,icon_filename,tooltip,tooltip_desc,command ) VALUES  (?,?,?,?,?,?)', 'data':
         	[data.toicon_priority.results[cntx].orderid,data.toicon_priority.results[cntx].opno,data.toicon_priority.results[cntx].iconFilename,
         	data.toicon_priority.results[cntx].tooltip,data.toicon_priority.results[cntx].tooltipDesc,data.toicon_priority.results[cntx].command ]
         	})
-        		  
+
         	}
         	  opMessage("toicon_job:"+data.toicon_job.results.length)
         	  for(var cntx=0; cntx < data.toicon_job.results.length ; cntx++)
         	{
-        		  
+
         	myarray.push({
         	'sql': 'INSERT INTO MyJobDetsIconJob ( orderno,opno,icon_type,icon_position,icon_filename,icon_txt,tooltip,tooltip_desc,command,grid,grid_vals ) VALUES  (?,?,?,?,?,?,?,?,?,?,?)', 'data':
         	[data.toicon_job.results[cntx].orderid,data.toicon_job.results[cntx].opno,data.toicon_job.results[cntx].iconType,data.toicon_job.results[cntx].iconPosition,
         	data.toicon_job.results[cntx].iconFilename,data.toicon_job.results[cntx].iconTxt,data.toicon_job.results[cntx].tooltip,
         	data.toicon_job.results[cntx].tooltipDesc.replace(/\,/g,":") ,data.toicon_job.results[cntx].command,data.toicon_job.results[cntx].grid,data.toicon_job.results[cntx].gridVals ]
         	})
-        		  
+
         	}
-        	  
+
 
 
 
@@ -1877,6 +1877,8 @@ function syncUploadAzure(id, synctype) {
     if((type=="RequestLiveLink")||(type=="WaitingLiveLink")){
     	retrycnt = parseInt(synctype.split(":")[1])
     }
+
+    console.log("TYPE LISTED BELOW")
     console.log(type+":"+retrycnt)
     var c040 = "NA"
     var d040 = ""
@@ -1929,7 +1931,7 @@ function syncUploadAzure(id, synctype) {
                 html5sql.process("SELECT * from MyVehicleCheck where id = '" + id + "'",
                 function (transaction, results, rowsArray) {
                     if (rowsArray.length > 0) {
-                        
+
                         if (!syncDetsSet) {
                             syncDetsSet = true;
                             SetLastSyncDetails("LASTSYNC_UPLOAD");
@@ -2195,6 +2197,7 @@ function syncUploadAzure(id, synctype) {
             }
             //done in Azure
             if (type == "NotificationsZ9")// Process New Notifications  ZPM3/Z9
+            console.log("Processed as a ZPM3")
             {
 
                 html5sql.process("SELECT * from MyNotifications where id = '" + id + "'",
@@ -2211,7 +2214,7 @@ function syncUploadAzure(id, synctype) {
                             SetLastSyncDetails("LASTSYNC_UPLOAD");
                         }
 
-                      
+
                         for(i=0;i < rowsArray.length;i++){
                         	if(rowsArray[i].equipmentstatus=='E0013'){
                         		rowsArray[i].equipmentstatus='1';
@@ -2225,10 +2228,10 @@ function syncUploadAzure(id, synctype) {
                           }
                         item = rowsArray[0];
                         opMessage("New ZPM3");
-                        
+
                         //header["UserId"] = localStorage.getItem('MobileUser');
                        //header["ShortText"] = item['shorttext'];
-                       
+
                        // myjson["Reportedby"] = localStorage.getItem('EmployeeID');
                        // myjson["NotifType"] = item['type'];
                        // myjson["ActStartDate"] = item['startdate'];
@@ -2236,12 +2239,15 @@ function syncUploadAzure(id, synctype) {
                        // myjson["ActEndDate"] = item['enddate'];
                        // myjson["ActEndTime"] = item['endtime'];
                        // myjson["User"] = localStorage.getItem('MobileUser');
-                       
+
 
                         var myjson = {};
                         myjson["Message"] = "";
                         myjson["MessageType"] = "";
                         myjson["ReportedBy"] = localStorage.getItem('EmployeeID');
+
+
+// Check numbers here should need -1 then back to string
                         myjson["EqStatus"] = item['equipmentstatus'];
                         myjson["NotifTyp"] = "Z9";
                         myjson["OrderId"] = item['orderno'];
@@ -2251,8 +2257,7 @@ function syncUploadAzure(id, synctype) {
                         myjson["StartTime"] = "";
                         myjson["EndDate"] = "";
                         myjson["EndTime"] = "";
-                        myjson["LongText"] = item['longtext'];
-
+                        myjson["longText"] = item['longtext'];
 
                         sapCalls += 1;
                         n = rowsArray.length
@@ -2261,7 +2266,7 @@ function syncUploadAzure(id, synctype) {
                             postAzureData("ZGW_MAM30_011_CREATE_NEW_JOB", myjson, "UPDATE MyNotifications SET state = 'NEW' WHERE id='" + item['id'] + "'", item['id']);
                         },
                         function (error, statement) {
-                            opErrorMessage("Error: " + error.message + " when processing " + statement);
+1                            opErrorMessage("Error: " + error.message + " when processing " + statement);
                         }
                         );
                     }
@@ -2273,7 +2278,7 @@ function syncUploadAzure(id, synctype) {
                 });
             }
             //done in Azure
-            if (type == "Notifications")// Process New Notifications  
+            if (type == "Notifications")// Process New Notifications
             {
                 //obHeader["Assignment"] needs the selected User from the Create Screen
                 html5sql.process("SELECT * from MyNotifications where id = '" + id + "'",
@@ -2349,12 +2354,12 @@ function syncUploadAzure(id, synctype) {
                     opErrorMessage("Error: " + error.message + " when processing " + statement);
                 });
             }
-            if (type == "ObjectList")// Process ObjectList  
+            if (type == "ObjectList")// Process ObjectList
             {
                 html5sql.process("SELECT * from MyObjectListData where id = '" + id + "'",
                 function (transaction, results, rowsArray) {
                     if (rowsArray.length > 0) {
-                    	
+
                         if (syncDetails) {
                             localStorage.setItem('LastSyncUploadDetails', localStorage.getItem('LastSyncUploadDetails') + ", ObjectList:" + String(rowsArray.length));
                         } else {
@@ -2367,14 +2372,14 @@ function syncUploadAzure(id, synctype) {
 
                         }
 
-                        
+
                         for(i=0;i < rowsArray.length;i++){
                         	rowsArray[i].counter=(rowsArray[i].counter).trim();
                        	   if(rowsArray[i].checked=="true"){
-                       		rowsArray[i].checked='X';
+                       		     rowsArray[i].checked='X';
                        	   }
                        	   else{
-                       		rowsArray[i].checked='';
+                       		    rowsArray[i].checked='';
                        	   }
                           }
                         item = rowsArray[0];
@@ -2385,9 +2390,18 @@ function syncUploadAzure(id, synctype) {
                         myjson["UserId"] = localStorage.getItem('MobileUser');
 
                         var toObjectList = [];
+
+                        // convert true to X
+                        if(c.toLowerCase() =="true"){
+                            item['checked'] ='X';
+                        }
+                        else{
+                           item['checked']='';
+                        }
+
                         toObjectList.push([{
                             "OrderId": item['orderid'],
-                            "Counter": item['counter'],
+                            "Counter": item['counter'].trim(),
                             "SortField": item['sapcode'],
                             "ProcessingInd": item['checked']
                         }])
@@ -2416,7 +2430,7 @@ function syncUploadAzure(id, synctype) {
                 });
             }
             //changes for CREOL
-            if (type == "EquipmentStatus")// Process New Notifications  
+            if (type == "EquipmentStatus")// Process New Notifications
             {
                 //obHeader["Assignment"] needs the selected User from the Create Screen
                 html5sql.process("SELECT * from MyEquipmentUpdates where id = '" + id + "'",
@@ -2465,7 +2479,7 @@ function syncUploadAzure(id, synctype) {
                     opMessage("Error: " + error.message + " when processing " + statement);
                 });
             }
-            if (type == "EquipmentStatusClose")// Process New Notifications  
+            if (type == "EquipmentStatusClose")// Process New Notifications
             {
                 //obHeader["Assignment"] needs the selected User from the Create Screen
                 html5sql.process("SELECT * from MyJobClose where id = '" + id + "'",
@@ -2521,7 +2535,7 @@ function syncUploadAzure(id, synctype) {
                 });
             }//end of changes
             //Done in Azure
-            if (type == "StatusUpdate")// Process Status Updates  
+            if (type == "StatusUpdate")// Process Status Updates
             {
                 html5sql.process("SELECT * from MyStatus where id = '" + id + "'",
                 function (transaction, results, rowsArray) {
@@ -2576,7 +2590,7 @@ function syncUploadAzure(id, synctype) {
                     opErrorMessage("Error: " + error.message + " when processing " + statement);
                 });
             }
-            if (type == "RequestLiveLink")// Process Status Updates 
+            if (type == "RequestLiveLink")// Process Status Updates
             {
 
                 html5sql.process("SELECT * from MyJobDetsDraw where id = '" + id + "'",
@@ -2611,7 +2625,7 @@ function syncUploadAzure(id, synctype) {
                         if(retrycnt<5){
                             html5sql.process("UPDATE MyJobDetsDraw SET zurl = 'WaitingLiveLink:0' where id='" + item['id'] + "'",
                                     function () {
-                                    	
+
                                         buildJobDocsTable();
                                         postAzureDoc("DocumentService", [], 'MYJOBSFileRequest.php' + params, "UPDATE MyJobDetsDraw SET zurl = 'RequestLiveLink:"+retrycnt+"' where id='" + item['id'] + "'", item['id'])
                                     },
@@ -2619,11 +2633,11 @@ function syncUploadAzure(id, synctype) {
 
                                         opErrorMessage("Error: " + error.message + " when processing " + statement);
                                     }
-                                    );                        	
+                                    );
                         }else{
                             html5sql.process("UPDATE MyJobDetsDraw SET zurl = 'RequestFailed' where id='" + item['id'] + "'",
                                     function () {
-                                    	
+
                                         buildJobDocsTable();
                                         //postAzureDoc("DocumentService", [], 'MYJOBSFileRequest.php' + params, "UPDATE MyJobDetsDraw SET zurl = 'RequestLiveLink:"+retrycnt+"' where id='" + item['id'] + "'", item['id'])
                                     },
@@ -2642,7 +2656,7 @@ function syncUploadAzure(id, synctype) {
                     opErrorMessage("Error: " + error.message + " when processing " + statement);
                 });
             }
-            if (type == "WaitingLiveLink")// Process LLDownloads  
+            if (type == "WaitingLiveLink")// Process LLDownloads
             {
 
                 html5sql.process("SELECT * from MyJobDetsDraw where id = '" + id + "'",
@@ -3442,7 +3456,7 @@ function syncUploadAzure(id, synctype) {
                 });
             }
             // done in azure
-            if (type == "TimeConf")// Process Time Confirmations  
+            if (type == "TimeConf")// Process Time Confirmations
             {
 
                 html5sql.process("SELECT * from MyTimeConfs where id = '" + id + "'",
@@ -3646,7 +3660,7 @@ function postZGW_MAM30_005_CREATE_TIME_CNF(User, OrderNo, OpNo, Description, Dur
 
 }
 /************************************************/
-/* Post Create New Notification 
+/* Post Create New Notification
         */
 /************************************************/
 function postZGW_MAM30_NOTIFICATION_CreateNewJob(User, NotifType, sDate, sTime, eDate, eTime, Floc, Equip, codeGroup, Code, actCatType, actGroup, actCode, actText, prioType, prioCode,
@@ -3717,7 +3731,7 @@ function postZGW_MAM30_VEHICLE_SRV_VehicleChkUpd(User, notifType, notifNo, measD
     postAzureData("ZGW_MAM30_VEHICLE_SRV_VehicleChkUpd", myjson, sql)
 }
 /************************************************/
-/* Post Customer Feedback      
+/* Post Customer Feedback
         */
 /************************************************/
 function postZGW_MAM30_011_CREATE_CFEED(User, NotifNo, NotifType, OrderNo, UserStatusH, Plant, MainWorkCtr, ReportedBy, ShortText,
@@ -3800,7 +3814,7 @@ ActTextl1, ActText1, ActCode1, ActCodegrp1, sql) {
 }
 
 /************************************************/
-/* Post Measurement Doc      
+/* Post Measurement Doc
         */
 /************************************************/
 function postZGW_MAM30_040_CREATE(User, MeasPoint, FuncLoc, Equipment, Reader, ReadingDate, ReadingTime, RecordedValue, ValuationCode, ShortText, sql) {
@@ -3823,7 +3837,7 @@ function postZGW_MAM30_040_CREATE(User, MeasPoint, FuncLoc, Equipment, Reader, R
     postAzureData("ZGW_MAM30_040_CREATE", myjson, sql)
 }
 function postAzureCB(data, page, recno) {
-	 
+
     var sqlstatement = "";
   //  opMessage("Callback sapCB triggured");
     pos = (page.lastIndexOf("/") + 1);
@@ -3866,7 +3880,7 @@ function postAzureCB(data, page, recno) {
     //Handle NewJob Create Customer Feedback
     if (pageName == "createcfeed") {
     	setSyncUpload('customerfeedback:');
-        
+
         opMessage("-->Type= " + type);
         opMessage("-->row= " + recno);
         opMessage("-->Message= " + sapmessage);
@@ -4081,7 +4095,7 @@ function ZGW_MAM30_USER_VALIDATE_SRVCB(data) {
         }
     }
     else {
-    	
+
         requestAzureData("getUserScenario", "WHERE userid='" + localStorage.getItem('MobileUser') + "'");
     }
 }
@@ -4091,15 +4105,15 @@ function getUserScenarioCB(data) {
         localStorage.setItem('EmployeeWorkCenter', data[0].workCntr)
         localStorage.setItem('EmployeeScenario', data[0].myalmScenario)
         localStorage.setItem('MobileFullname', data[0].firstname + " " + data[0].lastname)
-        
+
     }
-    
+
     if (localStorage.getItem('EmployeeScenario') == "Y009" || localStorage.getItem('EmployeeScenario') == "Y010") {
     	sap.ui.getCore().byId("Login_Message").setValue("Scenario " + localStorage.getItem('EmployeeScenario') + " is not a valid scenario.");
     	busyDoingLogon.close();
     }
     else {
-    	
+
     	 ZGW_MAM30_090_GETLIST_T3CBSingle(data)
     	 formLogin.close();
     	 busyDoingLogon.close();
@@ -4109,7 +4123,7 @@ function getUserScenarioCB(data) {
 //AssetCature Start
 
 function ZACAT001AssetCaptureCategoryCB(data) {
-	
+
     var myarray = [{ 'sql': 'DELETE FROM AssetCaptureCategory ', 'data': [] }];
     for (var cntx = 0; cntx < data.length ; cntx++) {
         myarray.push({
