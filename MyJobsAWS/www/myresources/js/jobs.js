@@ -681,6 +681,7 @@ new sap.m.Button( {
 
 		    }
 		}//end of changes
+		
       },
       afterOpen:function(){  
     	  sap.ui.getCore().getElementById('DG5tabBar').setSelectedKey("DG52")
@@ -689,6 +690,12 @@ new sap.m.Button( {
     	  //buildcloseObjectList();
           //wrt close job @asym
     	  buildObjectList_close();
+    	  if(sap.ui.getCore().byId("bundleasseticon").getVisible()){
+  			sap.ui.getCore().byId("dg54icon").setVisible(true);
+  		}
+  		else{
+  			sap.ui.getCore().byId("dg54icon").setVisible(false);
+  		}
           //wrt close job @asym
 
     	   //document.getElementById("Close_InShiftTime-inner").disabled=true;

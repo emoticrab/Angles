@@ -248,7 +248,9 @@ var formNewNotif = new sap.m.Dialog("dlgNewNotif",{
 		sap.ui.getCore().byId("NewGroup").setSelectedKey("NOTSELECTED");
 		sap.ui.getCore().byId("NewCode").setSelectedKey("NOTSELECTED");
 		sap.ui.getCore().byId("NewPriority").setSelectedKey("NOTSELECTED");
-		sap.ui.getCore().byId("Equipment_status").setSelectedKey("NOTSELECTED");//changes for CREOL
+		sap.ui.getCore().byId("Equipment_status").setSelectedKey("NOTSELECTED");
+		sap.ui.getCore().byId("Euipmentlabel").setVisible(false);
+        sap.ui.getCore().byId("Equipment_status").setVisible(false);//changes for CREOL
       },
       afterOpen:function(){
     	  document.getElementById("NewNotifStart-inner").disabled=true;

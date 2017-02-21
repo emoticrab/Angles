@@ -8,10 +8,10 @@ var Equipment_status = new sap.m.Select('Equipment_status', {
             key: "NOTSELECTED",
             text: "Please Select"
         }, {
-            key: "E0013",
+            key: "E0014",
             text: "Equipment Offline"
         }, {
-            key: "E0014",
+            key: "E0013",
             text: "Equipment Online"
         }, {
             key: "E0015",
@@ -33,10 +33,10 @@ var CloseEquipment_status = new sap.m.Select('CloseEquipment_status', {
             key: "NOTSELECTED",
             text: "Please Select"
         }, {
-            key: "E0013",
+            key: "E0014",
             text: "Equipment Offline"
         }, {
-            key: "E0014",
+            key: "E0013",
             text: "Equipment Online"
         }, {
             key: "E0015",
@@ -327,10 +327,10 @@ function updateMyObjectList(counter, type, val1, val2) {
 }
 function updateMyObjectListAll(val) {
     if (val == true) {
-        var sqlstatement = "UPDATE MyObjectListData  SET sapcode =null,feedbackdesc=null, checked = 'true' WHERE checked is null AND orderid = '" + CurrentOrderNo.replace(/^[0]+/g, "") + "' ;"
+        var sqlstatement = "UPDATE MyObjectListData  SET sapcode =null,feedbackdesc=null, checked = 'true' WHERE checked is null AND sapcode is null AND orderid = '" + CurrentOrderNo.replace(/^[0]+/g, "") + "' ;"
     }
     else {
-        var sqlstatement = "UPDATE MyObjectListData  SET sapcode =null ,feedbackdesc=null,checked = null WHERE checked is not null AND orderid = '" + CurrentOrderNo.replace(/^[0]+/g, "") + "' ;"
+        var sqlstatement = "UPDATE MyObjectListData  SET sapcode =null ,feedbackdesc=null,checked = null WHERE checked is not null OR sapcode is not null AND orderid = '" + CurrentOrderNo.replace(/^[0]+/g, "") + "' ;"
     }
 
     html5sql.process(sqlstatement, function (transaction, results, rowsArray) {

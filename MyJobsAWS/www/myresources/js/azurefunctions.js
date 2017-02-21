@@ -2211,8 +2211,19 @@ function syncUploadAzure(id, synctype) {
                             SetLastSyncDetails("LASTSYNC_UPLOAD");
                         }
 
+                      
+                        for(i=0;i < rowsArray.length;i++){
+                        	if(rowsArray[i].equipmentstatus=='E0013'){
+                        		rowsArray[i].equipmentstatus='1';
+                        		   }
+                        	else if(rowsArray[i].equipmentstatus=='E0014'){
+                        		rowsArray[i].equipmentstatus='2';
+                       	   }
+                       	   else if(rowsArray[i].equipmentstatus=='E0015'){
+                       		rowsArray[i].equipmentstatus='3';
+                       	   }
+                          }
                         item = rowsArray[0];
-
                         opMessage("New ZPM3");
                         
                         //header["UserId"] = localStorage.getItem('MobileUser');
@@ -2233,13 +2244,15 @@ function syncUploadAzure(id, synctype) {
                         myjson["ReportedBy"] = localStorage.getItem('EmployeeID');
                         myjson["EqStatus"] = item['equipmentstatus'];
                         myjson["NotifTyp"] = "Z9";
-                        myjson["OrderId"] = item['orderid'];
+                        myjson["OrderId"] = item['orderno'];
                         myjson["Equipment"] = item['equipment'];
                         myjson["ShortText"] = "";
                         myjson["StartDate"] = "";
                         myjson["StartTime"] = "";
                         myjson["EndDate"] = "";
                         myjson["EndTime"] = "";
+                        myjson["LongText"] = item['longtext'];
+
 
                         sapCalls += 1;
                         n = rowsArray.length
@@ -2341,6 +2354,7 @@ function syncUploadAzure(id, synctype) {
                 html5sql.process("SELECT * from MyObjectListData where id = '" + id + "'",
                 function (transaction, results, rowsArray) {
                     if (rowsArray.length > 0) {
+                    	
                         if (syncDetails) {
                             localStorage.setItem('LastSyncUploadDetails', localStorage.getItem('LastSyncUploadDetails') + ", ObjectList:" + String(rowsArray.length));
                         } else {
@@ -2353,8 +2367,17 @@ function syncUploadAzure(id, synctype) {
 
                         }
 
+                        
+                        for(i=0;i < rowsArray.length;i++){
+                        	rowsArray[i].counter=(rowsArray[i].counter).trim();
+                       	   if(rowsArray[i].checked=="true"){
+                       		rowsArray[i].checked='X';
+                       	   }
+                       	   else{
+                       		rowsArray[i].checked='';
+                       	   }
+                          }
                         item = rowsArray[0];
-
                         var myjson = {};
                         myjson["Message"] = "";
                         myjson["MessageType"] = "";
@@ -2368,7 +2391,7 @@ function syncUploadAzure(id, synctype) {
                             "SortField": item['sapcode'],
                             "ProcessingInd": item['checked']
                         }])
-                        myjson["toObjectList"] = toObjectList;
+                        myjson["toObjList"] = toObjectList;
 
                         //postAzureData("ZGW_MAM30_OBJLIST", myjson)
 
