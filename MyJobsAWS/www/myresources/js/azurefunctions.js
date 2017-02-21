@@ -2248,6 +2248,7 @@ function syncUploadAzure(id, synctype) {
 
 
 // Check numbers here should need -1 then back to string
+                        console.log("EQUIPMENT STATUS",item['equipmentstatus'])
                         myjson["EqStatus"] = item['equipmentstatus'];
                         myjson["NotifTyp"] = "Z9";
                         myjson["OrderId"] = item['orderno'];

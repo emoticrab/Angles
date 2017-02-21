@@ -1,14 +1,14 @@
 
- 
+
 var w = null;
-var objtype="";	
-var objid="";	
-var objshorttext="";	
-var objaddress="";	
-var objswerk="";		
+var objtype="";
+var objid="";
+var objshorttext="";
+var objaddress="";
+var objswerk="";
 var currentlySyncing=false
 var SAPServerPrefix="";
-var SAPServerSuffix="";	
+var SAPServerSuffix="";
 
 var parTrace= "ON";
 var syncDetsSet=false;
@@ -22,23 +22,23 @@ var sqlMyJobsDocs;
 var assetStatements=[];
 var allAssetCalls=[]
 function sendFormData(fname,orderno,opno,notifno){
-	
-	var c040="NA"	
-		var d040=""		
-		var c060="NA"	
-		var d060=""	
-		var c100="NA"	
+
+	var c040="NA"
+		var d040=""
+		var c060="NA"
+		var d060=""
+		var c100="NA"
 		var d100=""
-var 	formalsampletaken = ""	
+var 	formalsampletaken = ""
 var 	upstreamsenttolab= ""
 var 	ptofdiscsenttolab= ""
 var 	downstream1senttolab= ""
 var 	downstream2senttolab= ""
 var 	downstream3senttolab= ""
 		console.log("sendForm="+fname+orderno)
-	
+
 user=localStorage.getItem("MobileUser")
-empid=localStorage.getItem("EmployeeID")	
+empid=localStorage.getItem("EmployeeID")
 
 			var sqlstatement="SELECT * from myformsresponses where orderno = '"+orderno+"' and opno ='"+opno+"' and formname ='"+fname+"'"
 			console.log(sqlstatement)
@@ -51,20 +51,20 @@ empid=localStorage.getItem("EmployeeID")
 						console.log(jsonstr[0].workorder)
 						console.log("x:"+jsonstr[0]["workorder"])
 
-				
+
 
 
 						if(fname=="CustomerFeedback"){
 							if(jsonstr[0].reason.length>0){
-								c040="LT"	
+								c040="LT"
 								d040=jsonstr[0].reason
 							}
 							if(jsonstr[0].cause.length>0){
-								c060="LT"	
+								c060="LT"
 								d060=jsonstr[0].cause
 							}
 							if(jsonstr[0].ppmdetails.length>0){
-								c100="LT"	
+								c100="LT"
 								d100=jsonstr[0].ppmdetails
 							}
 							params="&RECNO="+rowsArray[0].id+"&NOTIF_TYPE=ZC&USER="+user+"&ORDER_ID="+orderno+"&NOTIF_NO="+notifno+
@@ -90,7 +90,7 @@ empid=localStorage.getItem("EmployeeID")
 							if(jsonstr[0].downstream3senttolabV=="YES"){	downstream3senttolab="X"	}
 
 						params="&RECNO="+rowsArray[0].id+"&USERID="+user+"&AUFNR="+orderno+"&NOTIF_NO="+notifno+"&PPIA="+orderno+','+
-							
+
 							jsonstr[0].pollutionsitetype.trim()+",,"+jsonstr[0].pollutionsite.trim()+","+
 							jsonstr[0].dischargetype.trim()+",,"+
 							jsonstr[0].watercoursetype.trim()+",,"+
@@ -105,12 +105,12 @@ empid=localStorage.getItem("EmployeeID")
 
 							sendSAPData("MyJobsPIACreate.htm",params,"UPDATE MyFormsResponses SET lastupdated = 'NEW' WHERE id='"+rowsArray[0].id+"'");
 						}
-					  
+
 						if(fname=="Flooding"){
-							
-						
-							
-						
+
+
+
+
 
 						locsArray = [""]
 						params="&RECNO="+rowsArray[0].id+"&USERID="+user+"&AUFNR="+orderno+
@@ -123,7 +123,7 @@ empid=localStorage.getItem("EmployeeID")
 							if(cnt>0){
 								pitem+=","
 							}
-						 row=cnt+1;	
+						 row=cnt+1;
 						 litenno = row *10;
 						 litem = ("0000" + litenno).slice(-4)
 						 type=jsonstr[0].location[cnt]["loctype-"+row].split(":")
@@ -138,15 +138,15 @@ empid=localStorage.getItem("EmployeeID")
 						roomsArray=[]
 						for(var cnt=0; cnt < jsonstr[0].room.length ; cnt++)
 						{
-						row=cnt+1;	
+						row=cnt+1;
 						 loc=jsonstr[0].room[cnt]["roomloc-"+row].split(":")
 						 room=jsonstr[0].room[cnt]["roomroom-"+row].split(":")
 						 depth=jsonstr[0].room[cnt]["roomdepth-"+row].split(":")
 						 comments=jsonstr[0].room[cnt]["roomcomments"+row].split(":")
 
 						 roomsArray.push(loc[0]+"|"+room[0]+"|"+depth[0]+"|"+comments[0])
-						  
-						
+
+
 						}
 						roomsArray.sort();
 						var pdepth="";
@@ -158,7 +158,7 @@ empid=localStorage.getItem("EmployeeID")
 								pdepth+=","
 							}
 						theroom = roomsArray[cnt].split("|");
-						 row=cnt+1;	
+						 row=cnt+1;
 						 loc=theroom[0]
 						 litemno = row *10;
 						 f1=locsArray.indexOf(loc);
@@ -170,18 +170,18 @@ empid=localStorage.getItem("EmployeeID")
 						 }
 						 litem=("0000" + f1*10).slice(-4)
 						 ditem=("0000" + dno*10).slice(-4)
-						 
+
 						 room=theroom[1]
 						 depth=theroom[2]
 						 comments=theroom[3]
 						 pdepth+=orderno+','+litem+','+ditem+','+room+",,"+depth+",,"+comments+","
 						//alert("room:"+orderno+','+litem+','+ditem+','+room+",,"+depth+",,"+comments)
-						 
-						  
-						
+
+
+
 						}
-						
-	
+
+
 						//need to populate the PHDR
 						//sort date & time formats
 						gridref=jsonstr[0].gridref.split(",");
@@ -202,23 +202,23 @@ empid=localStorage.getItem("EmployeeID")
 						jsonstr[0].attendanceweather+","+jsonstr[0].previousflooding+','+jsonstr[0].floodingsource+','+jsonstr[0].rootcause+
 						"&PDEPTH="+pdepth+
 						"&PITEM="+pitem
-					   
+
 
 							sendSAPData("MyJobsDG5Create.htm",params,"UPDATE MyFormsResponses SET lastupdated = 'NEW' WHERE id='"+rowsArray[0].id+"'");
 						}
-					  }				
-				/*	
+					  }
+				/*
 				opMessage("NewTconf Details="+newTConfDets);
-				
+
 				sendSAPData("MyJobsCreateTConf.htm",newTConfDets,"UPDATE MyTimeConfs SET confno = 'NEW' WHERE id='"+item['id']+"'");
-						*/		
-							
+						*/
+
 					},
 					 function(error, statement){
 						 console.log("send Form Error: " + error.message + " when processing " + statement);
-					 }   
+					 }
 				);
-			
+
 }
 
 function setUserAgent(window, userAgent) {
@@ -238,7 +238,7 @@ function isTablet(customUA) {
 
 	  if (device.os.name === device.os.OS.IOS) {
 	  return /ipad/i.test(ua);
-	  }	 
+	  }
 }
 function sendSMS(to, message)
 {
@@ -254,26 +254,26 @@ return fdt;
 }
 
 function setSyncingIndicator(state){
-	
+
 	var path = window.location.pathname;
     var page = path.split("/").pop();
     /*if(page=="Jobs.html"){
-    	
+
 		if(state){
 			console.log("on")
 			sap.ui.getCore().getElementById("Syncit").setType(syncStatusType)
-			sap.ui.getCore().getElementById("Syncit").setVisible(false)			
+			sap.ui.getCore().getElementById("Syncit").setVisible(false)
 			sap.ui.getCore().getElementById("jobsyncIndicator").setVisible(true)
 		}else{
 			console.log("off")
 			sap.ui.getCore().getElementById("Syncit").setType(syncStatusType)
 			sap.ui.getCore().getElementById("Syncit").setVisible(true)
 			sap.ui.getCore().getElementById("jobsyncIndicator").setVisible(false)
-			
+
 		}
 	}*/
     //if(page=="Home.html"){
-    	
+
 		if(state){
 			sap.ui.getCore().getElementById("LastSyncMesshome").setType(syncStatusType)
 			sap.ui.getCore().getElementById("LastSyncMesshome").setVisible(false)
@@ -282,7 +282,7 @@ function setSyncingIndicator(state){
 			sap.ui.getCore().getElementById("LastSyncMesshome").setType(syncStatusType)
 			sap.ui.getCore().getElementById("LastSyncMesshome").setVisible(true)
 			sap.ui.getCore().getElementById("syncIndicatorhome").setVisible(false)
-			
+
 		}
 //	}
 }
@@ -299,27 +299,27 @@ function requestSAPData(page,params){
 		 console.log("Invalid URL")
 		 syncStatusType=sap.m.ButtonType.Reject
 		 setSyncingIndicator(false)
-		  
+
 		  return
 		}
-		
-	
+
+
 	$.ajax({
-	   
+
 	    dataType: "json",
 	    url: myurl,
-	    
+
 	    timeout: 300000
 		}).done(function() {
 			console.log("success")
-			syncStatusType=sap.m.ButtonType.Accept			
+			syncStatusType=sap.m.ButtonType.Accept
 		    opMessage("call success"+page );
 		  }).fail( function( xhr, status ) {
-			  
-			  
+
+
 		      opErrorMessage(page + status)
 			  	if (status!="parsererror"){
-					
+
 				    if( status == "timeout" ) {
 				    	syncStatusType=sap.m.ButtonType.Reject
 						setSyncingIndicator(false)
@@ -329,27 +329,27 @@ function requestSAPData(page,params){
 			}).always(function() {
 					console.log("complete")
 					opMessage("Complete"+page );
-					
-				
+
+
 			  });
 
- 
-  
-}	 
- 
+
+
+}
+
 
 
 function updateMyJobDetsDraw(id,dir)
 {
 	html5sql.process(
-			
+
 			["UPDATE MyJobDetsDraw set zurl  = '"+dir+"' WHERE id = "+ id],
 			function(transaction, results, rowsArray){
-				buildJobDocsTable();	
+				buildJobDocsTable();
 			},
 			 function(error, statement){
 				opErrorMessage("Error: " + error.message + " when jobdetsdraw processing " + statement);
-			 } 
+			 }
 
 		)
 }
@@ -360,19 +360,19 @@ function sendSAPData(page,params,timedOutSQL){
 	localStorage.setItem("SAPCalling","true")
 	opMessage(page+getTime());
 	console.log(page+getTime())
-	
+
 	var myurl=SAPServerPrefix+page+SAPServerSuffix+params;
 
 	$.ajax({
 	    dataType: "json",
-	    url: myurl,  
+	    url: myurl,
 	    timeout: 60000
 		}).done(function() {
 		    console.log("call success"+page );
 		  }).fail( function( xhr, status ) {
-			    
+
 			  	if (status!="parsererror"){
-					
+
 				    if( status == "timeout" ) {
 				    	console.log("TimedOut1"+TimedOut)
 				    	TimedOut=true;
@@ -382,36 +382,36 @@ function sendSAPData(page,params,timedOutSQL){
 				    }
 			  	}
 			}).always(function() {
-					
+
 					console.log( "Complete "+page+ " at "+getTime()+" Timedout = "+TimedOut);
 					if(TimedOut==false){
 						localStorage.setItem("SAPCalling","false")
 						syncUpload()
 					}else{
 						localStorage.setItem("SAPCalling","false")
-						
+
 					}
-					
-				
+
+
 			  });
-    
+
   //})
- 
-  
-}	
+
+
+}
 function resetSENDINGData(sql){
-	
+
 		html5sql.process(sql,
 				function(transaction, results, rowsArray){
-				
+
 					},
 				 function(error, statement){
 					 window.console&&console.log("Error: " + error.message + " when processing " + statement);
-				 }   
+				 }
 			);
 
-	  
-		
+
+
 
 	}
 function opMessage(msg) {
@@ -437,7 +437,7 @@ function opLog(msg, type) {
 						 },
 						 function(error, statement){
 							 window.console&&console.log("Error: " + error.message + " when processing " + statement);
-						 }        
+						 }
 	    		);
 	}
 }
@@ -451,45 +451,45 @@ xtraceState="";
 				traceState= rowsArray[0].paramvalue;
 				}
 			localStorage.setItem('Trace',traceState);
-			$('#traceState').val(traceState); 	
+			$('#traceState').val(traceState);
 			$('#traceState').selectmenu('refresh', true);
 
 		},
 		 function(error, statement){
 			 window.console&&console.log("Error: " + error.message + " when processing " + statement);
-		 }   
+		 }
 	);
-}	
+}
 function getCFeedFollowOnState(orderno,opno){
 	sap.ui.getCore().getElementById("Close_Work").setEnabled(true);
-	 
+
 		html5sql.process(
 			["SELECT * from MyFormsResponses where orderno = '"+orderno+"' and opno = '"+opno+"' and formname = 'CustomerFeedback'"],
 			function(transaction, results, rowsArray){
-				
+
 				if( rowsArray.length <1) {
 					sap.ui.getCore().getElementById("Close_Work").setState(false);
 					}else{
 						if(unescape(rowsArray[0].contents).indexOf("\"furtherworkV\":\"YES\"")>0){
-							
+
 							sap.ui.getCore().getElementById("Close_Work").setState(true);
-							
+
 							sap.ui.getCore().getElementById("Close_Work").setEnabled(false);
 						}else{
-							
+
 							sap.ui.getCore().getElementById("Close_Work").setState(false);
 							sap.ui.getCore().getElementById("Close_Work").setState(false);
-							
+
 							sap.ui.getCore().getElementById("Close_Work").setEnabled(false);
 						}
 					}
-				
+
 
 			},
 			 function(error, statement){
-				
+
 				sap.ui.getCore().getElementById("Close_Work").setState(false);
-			 }   
+			 }
 		);
 	}
 function databaseExists(){
@@ -508,12 +508,12 @@ function databaseExists(){
 		 function(error, statement){
 			 window.console&&console.log("Error: " + error.message + " when processing " + statement);
 			 return(false);
-		 }   
+		 }
 	);
-	
-}	
+
+}
 function SetLocalStorageChangePage(page){
-	 
+
 	html5sql.process(
 	    ["SELECT * from MyWorkConfig "],
 	    function(transaction, results, rowsArray){
@@ -527,75 +527,75 @@ function SetLocalStorageChangePage(page){
 			}
 			if (rowsArray[i].paramname=='SAPSYSTEM'){
 				localStorage.setItem('SAPSystem',rowsArray[i].paramvalue);
-				
+
 			}
 			if (rowsArray[i].paramname=='SAPCLIENT'){
 				localStorage.setItem('SAPClient',rowsArray[i].paramvalue);
-				
+
 			}
 			if (rowsArray[i].paramname=='SYNC_REFERENCE_FREQUENCY'){
 				localStorage.setItem('SyncReferenceFrequency',rowsArray[i].paramvalue);
-		
+
 			}
 			if (rowsArray[i].paramname=='SYNC_TRANSACTIONAL_FREQUENCY'){
 				localStorage.setItem('SyncTransactionalFrequency',rowsArray[i].paramvalue);
 			}
 			if (rowsArray[i].paramname=='SYNC_UPLOAD_FREQUENCY'){
 				localStorage.setItem('SyncUploadFrequency',rowsArray[i].paramvalue);
-			}			
+			}
 
 			if (rowsArray[i].paramname=='LASTSYNC_REFERENCE'){
 				localStorage.setItem('LastSyncReference',rowsArray[i].paramvalue);
-		
+
 			}
 			if (rowsArray[i].paramname=='LASTSYNC_TRANSACTIONAL'){
 				localStorage.setItem('LastSyncTransactional',rowsArray[i].paramvalue);
 			}
 			if (rowsArray[i].paramname=='LASTSYNC_UPLOAD'){
 				localStorage.setItem('LastSyncUpload',rowsArray[i].paramvalue);
-		
-			}			
+
+			}
 			if (rowsArray[i].paramname=='TRACE'){
 				localStorage.setItem('Trace',rowsArray[i].paramvalue);
-		
+
 			}
 			if (rowsArray[i].paramname=='ASSET_PATH'){
 				localStorage.setItem('AssetPath',rowsArray[i].paramvalue);
-		
+
 			}
 			if (rowsArray[i].paramname=='DEBUGUSERNAME'){
 				localStorage.setItem('DebugUsername',rowsArray[i].paramvalue);
-		
+
 			}
 			if (rowsArray[i].paramname=='DEBUGSCENARIO'){
 				localStorage.setItem('DebugScenario',rowsArray[i].paramvalue);
-		
+
 			}
 			if (rowsArray[i].paramname=='DEBUGPASSWORD'){
 				localStorage.setItem('DebugPassword',rowsArray[i].paramvalue);
-		
+
 			}
 			if (rowsArray[i].paramname=='DEBUGTOKENVALIDITY'){
 				localStorage.setItem('DebugTokenValidity',rowsArray[i].paramvalue);
-		
+
 			}
 			if (rowsArray[i].paramname=='LASTTOKENREFRESH'){
 				localStorage.setItem('LastTokenRefresh',rowsArray[i].paramvalue);
-		
+
 			}
 			if (rowsArray[i].paramname == 'LastLogoff') {
 			    localStorage.setItem('LastLogoff', rowsArray[i].paramvalue);
 			}
 
 	      }
-	     
+
 	     window.location.href=page
 	    },
 	    function(error, statement){
-	    	    
+
 	    }
-	);			
-		
+	);
+
 	}
 function SetLocalStorage(){
 
@@ -609,57 +609,57 @@ html5sql.process(
 			localStorage.setItem('ServerName',rowsArray[i].paramvalue);
 			localStorage.setItem('DOCSERVER', rowsArray[i].paramvalue+"/api/DocumentService?");
 			mobileService = new WindowsAzure.MobileServiceClient(localStorage.getItem('ServerName'));
-			
+
 		}
 		if (rowsArray[i].paramname=='SYNC_REFERENCE_FREQUENCY'){
 			localStorage.setItem('SyncReferenceFrequency',rowsArray[i].paramvalue);
-	
+
 		}
 		if (rowsArray[i].paramname=='SYNC_TRANSACTIONAL_FREQUENCY'){
 			localStorage.setItem('SyncTransactionalFrequency',rowsArray[i].paramvalue);
 		}
 		if (rowsArray[i].paramname=='SYNC_UPLOAD_FREQUENCY'){
 			localStorage.setItem('SyncUploadFrequency',rowsArray[i].paramvalue);
-		}			
+		}
 
 		if (rowsArray[i].paramname=='LASTSYNC_REFERENCE'){
 			localStorage.setItem('LastSyncReference',rowsArray[i].paramvalue);
-	
+
 		}
 		if (rowsArray[i].paramname=='LASTSYNC_TRANSACTIONAL'){
 			localStorage.setItem('LastSyncTransactional',rowsArray[i].paramvalue);
 		}
 		if (rowsArray[i].paramname=='LASTSYNC_UPLOAD'){
 			localStorage.setItem('LastSyncUpload',rowsArray[i].paramvalue);
-	
-		}			
+
+		}
 		if (rowsArray[i].paramname=='TRACE'){
 			localStorage.setItem('Trace',rowsArray[i].paramvalue);
-	
-		}	
+
+		}
 		if (rowsArray[i].paramname=='ASSET_PATH'){
 			localStorage.setItem('AssetPath',rowsArray[i].paramvalue);
-	
+
 		}
 		if (rowsArray[i].paramname=='DEBUGUSERNAME'){
 			localStorage.setItem('DebugUsername',rowsArray[i].paramvalue);
-	
+
 		}
 		if (rowsArray[i].paramname=='DEBUGSCENARIO'){
 			localStorage.setItem('DebugScenario',rowsArray[i].paramvalue);
-	
+
 		}
 		if (rowsArray[i].paramname=='DEBUGPASSWORD'){
 			localStorage.setItem('DebugPassword',rowsArray[i].paramvalue);
-	
+
 		}
 		if (rowsArray[i].paramname=='DEBUGTOKENVALIDITY'){
 			localStorage.setItem('DebugTokenValidity',rowsArray[i].paramvalue);
-	
+
 		}
 		if (rowsArray[i].paramname=='LASTTOKENREFRESH'){
 			localStorage.setItem('LastTokenRefresh',rowsArray[i].paramvalue);
-	
+
 		}
 		if (rowsArray[i].paramname == 'LastLogoff') {
 		    localStorage.setItem('LastLogoff', rowsArray[i].paramvalue);
@@ -670,10 +670,10 @@ html5sql.process(
       getCurrentUser();
     },
     function(error, statement){
-      //hande error here           
+      //hande error here
     }
-);			
-	
+);
+
 }
 
 
@@ -687,14 +687,14 @@ function GetConfigParam(paramName){
 				if (paramName == "TRACE"){
 					parTrace=item['paramvalue'];
 				}
-				
+
 			}
-	
+
 
 		},
 		 function(error, statement){
 			 window.console&&console.log("Error: " + error.message + " when processing " + statement);
-		 }   
+		 }
 	);
 }
 function updatePinCode(pincode){
@@ -703,31 +703,31 @@ var user=localStorage.getItem('MobileUser')
 		localStorage.setItem('PinCode',pincode);
 
 		var sqlstatement="UPDATE MyUserDets SET pincode = '"+pincode+"' WHERE mobileuser = '"+user+"';";
-		
+
 	html5sql.process(sqlstatement,
 	 function(){
 		 //alert("Success dropping Tables");
 	 },
 	 function(error, statement){
 		 opErrorMessage("Error: " + error.message + " when updateing Pincode " + statement);
-	 }        
+	 }
 	);
 
 }
 function updateVehicleReg(reg,fullname){
 
 	var user=localStorage.getItem('MobileUser')
-			
+
 
 			var sqlstatement="UPDATE MyUserDets SET vehiclereg = '"+reg+"', fullname = '"+fullname+"' WHERE mobileuser = '"+user+"';";
-			
+
 		html5sql.process(sqlstatement,
 		 function(){
 			 //alert("Success dropping Tables");
 		 },
 		 function(error, statement){
 			 opErrorMessage("Error: " + error.message + " when updateing Vehicle Reg " + statement);
-		 }        
+		 }
 		);
 
 	}
@@ -760,35 +760,35 @@ function SetConfigParam(paramName, paramValue){
 			if (paramName=='SAPSYSTEM'){
 				localStorage.setItem('SAPSystem',paramValue);
 			}
-			if (paramName=='SYNC_REFERENCE_FREQUENCY'){			
-				localStorage.setItem('SyncReferenceFrequency',paramValue);		
+			if (paramName=='SYNC_REFERENCE_FREQUENCY'){
+				localStorage.setItem('SyncReferenceFrequency',paramValue);
 			}
 			if (paramName=='SYNC_TRANSACTIONAL_FREQUENCY'){
-				localStorage.setItem('SyncTransactionalFrequency',paramValue);		
+				localStorage.setItem('SyncTransactionalFrequency',paramValue);
 			}
 			if (paramName=='SYNC_UPLOAD_FREQUENCY'){
-				localStorage.setItem('SyncUploadFrequency',paramValue);		
+				localStorage.setItem('SyncUploadFrequency',paramValue);
 			}
 			if (paramName=='LASTSYNC_REFERENCE'){
 				localStorage.setItem('LastSyncReference',paramValue);
-		
+
 			}
 			if (paramName=='LASTSYNC_TRANSACTIONAL'){
 				localStorage.setItem('LastSyncTransactional',paramValue);
 			}
 			if (paramName=='LASTSYNC_UPLOAD'){
 				localStorage.setItem('LastSyncUpload',paramValue);
-		
+
 			}
 
 			if (paramName=='TRACE'){
-				localStorage.setItem('Trace',paramValue);		
+				localStorage.setItem('Trace',paramValue);
 			}
 			if (paramName=='ASSET_PATH'){
 				localStorage.setItem('AssetPath',paramValue);
-		
+
 			}
-	var sqlstatement=""		
+	var sqlstatement=""
 	html5sql.process(
 		["SELECT * from MyWorkConfig where paramname = '"+paramName+"'"],
 		function(transaction, results, rowsArray){
@@ -803,14 +803,14 @@ function SetConfigParam(paramName, paramValue){
 			 },
 			 function(error, statement){
 				 opErrorMessage("Error: " + error.message + " when SetConfigParam processing " + statement);
-			 }        
+			 }
 			);
 		},
 		function(error, statement){
-			opErrorMessage("Error: " + error.message + " when SetConfigParam processing " + statement);          
+			opErrorMessage("Error: " + error.message + " when SetConfigParam processing " + statement);
 		}
 	);
-}		
+}
 function SetAllConfigParam(p1,v1,p2,v2,p3,v3,p4,v4,p5,v5){
 	SetConfigParam(p1,v1);
 	SetConfigParam(p2,v2);
@@ -819,8 +819,8 @@ function SetAllConfigParam(p1,v1,p2,v2,p3,v3,p4,v4,p5,v5){
 	SetConfigParam(p5,v5);
 }
 function CreatePhotoEntry(orderno, opno, url, name, desc , size, date, status){
-	
-	
+
+
 
 	html5sql.process("INSERT INTO MyJobsPhotos (orderno, opno, url, name, desc , size, date, status) VALUES ('"+
 			orderno+"','" +opno+"','" +url+"','" +name+"','"+desc+"','"+size+"','" + date+"','" + status+"');",
@@ -831,25 +831,25 @@ function CreatePhotoEntry(orderno, opno, url, name, desc , size, date, status){
 			 if(status=="Sending"){
 				 	getBase64FromImageUrl(selectedPhoto,selectedPhotoID,sap.ui.getCore().getElementById('NewPhotoName').getValue())
 			 }
-			 
-			
+
+
 		 },
 		 function(error, statement){
 			 opErrorMessage("Error: " + error.message + " when inserting Photo" + statement);
-		 }        
+		 }
 		);
-		 
+
 		buildJobPhotoList()
 	 },
 	 function(error, statement){
 		 opErrorMessage("Error: " + error.message + " when inserting Photo" + statement);
-	 }        
+	 }
 	);
 
 }
 function UpdatePhotoEntry(orderno, opno, id, name, desc ,status){
-	
-	
+
+
 
 	html5sql.process("Update MyJobsPhotos set name ='"+name+"', desc = '"+desc+"', status = '"+status+"' where id = '"+id+"'",
 	 function(transaction, results, rowsArray){
@@ -857,13 +857,13 @@ function UpdatePhotoEntry(orderno, opno, id, name, desc ,status){
 	 },
 	 function(error, statement){
 		opErrorMessage("Error: " + error.message + " when inserting Photo" + statement);
-	 }        
+	 }
 	);
 
 }
 function UpdatePhotoEntryonClose(orderno, opno, id, name, desc ,status){
-	
-	
+
+
 
 	html5sql.process("Update MyJobsPhotos set name ='"+name+"', desc = '"+desc+"', status = '"+status+"' where id = '"+id+"'",
 	 function(transaction, results, rowsArray){
@@ -871,13 +871,13 @@ function UpdatePhotoEntryonClose(orderno, opno, id, name, desc ,status){
 	 },
 	 function(error, statement){
 		 opErrorMessage("Error: " + error.message + " when inserting Photo" + statement);
-	 }        
+	 }
 	);
 
 }
 function DeletePhotoEntry(orderno, opno, id){
-	
-	
+
+
 
 	html5sql.process("Delete from  MyJobsPhotos where orderno ='"+orderno+"' and opno = '"+opno+"' and id = '"+id+"'",
 	 function(transaction, results, rowsArray){
@@ -885,7 +885,7 @@ function DeletePhotoEntry(orderno, opno, id){
 	 },
 	 function(error, statement){
 		opErrorMessage("Error: " + error.message + " when inserting Photo" + statement);
-	 }        
+	 }
 	);
 
 }
@@ -895,7 +895,7 @@ function DeletePhotoEntry(orderno, opno, id){
 //
 //*************************************************************************************************************************
 function CreateUser(muser,vehiclereg, u, p, employeeid, pincode, maptype, docserver){
-	
+
 	opMessage("Creating User "+muser+":"+vehiclereg+":"+u+":"+p+":"+employeeid);
 
 	html5sql.process("delete from MyUserDets; INSERT INTO MyUserDets (mobileuser , vehiclereg, user, password ,employeeid, pincode, maptype, docserver) VALUES ('"+muser+"','" +vehiclereg+"','" +u+"','" +p+"','"+employeeid+"','"+pincode+"','" + maptype+"','" + docserver+"');",
@@ -904,7 +904,7 @@ function CreateUser(muser,vehiclereg, u, p, employeeid, pincode, maptype, docser
 	 },
 	 function(error, statement){
 		 opErrorMessage("Error: " + error.message + " when drop processing " + statement);
-	 }        
+	 }
 	);
 
 }
@@ -920,20 +920,20 @@ function CreateAZUREUser(muser,  maptype, docserver){
 							requestAzureData("ZGW_MAM30_USER_VALIDATE_SRV", "UserId='" + muser + "',Password=''")
 						 },
 						 function(error, statement){
-							 
+
 							 opErrorMessage("Error: " + error.message + " when drop processing " + statement);
-						 }        
+						 }
 						);
-						
+
 					}
-				
+
 			 },
 			 function(error, statement){
 				 opErrorMessage("Error: " + error.message + " when drop processing " + statement);
 				wait = false;
-			 }        
+			 }
 			);
-	
+
 
 }
 function updateMapType(maptype){
@@ -946,7 +946,7 @@ function updateMapType(maptype){
 	 },
 	 function(error, statement){
 		 opErrorMessage("Error: " + error.message + " when drop processing " + statement);
-	 }        
+	 }
 	);
 
 
@@ -960,7 +960,7 @@ function updateDocServer(docserver){
 	 },
 	 function(error, statement){
 		 opErrorMessage("Error: " + error.message + " when docserver " + statement);
-	 }        
+	 }
 	);
 
 
@@ -974,7 +974,7 @@ function ChangeUserPW(muser, u, p){
 	 },
 	 function(error, statement){
 		 opErrorMessage("Error: " + error.message + " when drop processing " + statement);
-	 }        
+	 }
 	);
 
 
@@ -992,12 +992,12 @@ var retVal= false;
 			}else{
 			wait = false;
 			}
-		
+
 	 },
 	 function(error, statement){
 		 opErrorMessage("Error: " + error.message + " when drop processing " + statement);
 		wait = false;
-	 }        
+	 }
 	);
 while(wait == true){
 }
@@ -1016,12 +1016,12 @@ function validateUserExists(u,p){
 			}else {
 			return(0);
 			}
-		
+
 	 },
 	 function(error, statement){
 		 opErrorMessage("Error: " + error.message + " when drop processing " + statement);
 		return(2);
-	 }        
+	 }
 	);
 return(2);
 
@@ -1030,16 +1030,16 @@ function getCurrentUser(){
 	html5sql.process("SELECT * from MyUserDets",
 			 function(transaction, results, rowsArray){
 					if( rowsArray.length > 0) {
-						localStorage.setItem('MobileUser',rowsArray[0].user.toUpperCase())						
-						localStorage.setItem("EmployeeID",rowsArray[0].employeeid)	
-						localStorage.setItem("VehicleReg",rowsArray[0].vehiclereg)	
+						localStorage.setItem('MobileUser',rowsArray[0].user.toUpperCase())
+						localStorage.setItem("EmployeeID",rowsArray[0].employeeid)
+						localStorage.setItem("VehicleReg",rowsArray[0].vehiclereg)
 						localStorage.setItem('EmployeeWorkCenter',rowsArray[0].workcenter)
 						localStorage.setItem('EmployeeScenario',rowsArray[0].scenario)
 						localStorage.setItem("PinCode",rowsArray[0].pincode)
 						localStorage.setItem("MAPTYPE",rowsArray[0].maptype)
 						localStorage.setItem("DOCSERVER",rowsArray[0].docserver)
 						localStorage.setItem("MobileFullname",rowsArray[0].fullname)
-					
+
 					}else{
 						localStorage.setItem('MobileUser',"")
 						localStorage.setItem("EmployeeID","")
@@ -1056,29 +1056,29 @@ function getCurrentUser(){
 			 function(error, statement){
 				 opErrorMessage("Error: " + error.message + " when drop processing " + statement);
 				 localStorage.setItem('CurrentUsername','')
-			 });   
+			 });
 }
 function CheckSyncInterval(SyncType){
-	
+
 	var dtNow=getDate()+getTime();
 					if (SyncType=='REFERENCE'){
 						lastSyncDT=localStorage.getItem('LastSyncReference');
-						
+
 						SyncInterval=localStorage.getItem('SyncReferenceFrequency');
 					}
 					if (SyncType=='TRANSACTIONAL'){
 						lastSyncDT=localStorage.getItem('LastSyncTransactional');
 						SyncInterval=localStorage.getItem('SyncTransactionalFrequency');
-				
+
 					}
 					if (SyncType=='UPLOAD'){
 						lastSyncDT=localStorage.getItem('LastSyncUpload');
 						SyncInterval=localStorage.getItem('SyncUploadFrequency');
-				
+
 					}
-					
+
 	var diff = parseDate(dtNow) - parseDate(lastSyncDT);
-	
+
 	//opMessage("Checking Sync Interval:--Type="+SyncType+"--Last Synced="+lastSyncDT+"--Iterval ="+SyncInterval+"--MS Since Last Sync="+diff);
 
 
@@ -1095,7 +1095,7 @@ function CheckSyncInterval(SyncType){
 //changes for CREOL added new parameter equipment_status//XSource
 function createNotification(type, priority, group, code, grouptext, codetext, description, details, startdate, starttime, funcloc, equipment, employeeno, SpecialReq, assigntome, equipment_status)
 {
-	
+
 var ReportedOn=getDate()+" "+getTime();
 var ReportedBy=localStorage.getItem("MobileUser");
 if (assigntome){
@@ -1119,7 +1119,7 @@ html5sql.process(sqlstatement,
 	 function(error, statement){
 
 	     console.log("fhere");
-	 }        
+	 }
 	)
 }
 
@@ -1130,7 +1130,7 @@ nowd=getDate();
 nowt=getTime();
 paramValue=nowd+nowt;
 var sqlstatement="";
-var lastsync=localStorage.getItem('LastSyncedDT')	;		
+var lastsync=localStorage.getItem('LastSyncedDT')	;
 	if (paramName=='LASTSYNC_REFERENCE'){
 		localStorage.setItem('LastSyncReference',paramValue);
 
@@ -1142,11 +1142,11 @@ var lastsync=localStorage.getItem('LastSyncedDT')	;
 	if (paramName=='LASTSYNC_UPLOAD'){
 		localStorage.setItem('LastSyncUpload',paramValue);
 
-	}	
+	}
 	if (paramName=='LASTSYNC_UPLOADDT'){
 		localStorage.setItem('LastSyncUploadDT',paramValue);
 
-	}	
+	}
 	if(paramValue>lastsync){
 		localStorage.setItem('LastSyncedDT',paramValue);
 	}
@@ -1165,11 +1165,11 @@ var lastsync=localStorage.getItem('LastSyncedDT')	;
 			 },
 			 function(error, statement){
 				 opErrorMessage("Error: " + error.message + " when Last Sync Update processing " + statement);
-			 }        
+			 }
 			);
 		},
 		function(error, statement){
-			opErrorMessage("Error: " + error.message + " when Last Sync Update processing " + statement);          
+			opErrorMessage("Error: " + error.message + " when Last Sync Update processing " + statement);
 		}
 	);
 }
@@ -1188,7 +1188,7 @@ function syncTransactional() {
 	    if (!CheckSyncInterval('TRANSACTIONAL')) {
 	        return;
 	    }
-	    
+
 	    homepage.setTitle("MyJobs ("+myjobsVersion+") - "+localStorage.getItem("MobileUser"))
 	    opMessage("SYNC:TRANSACTIONAL SyncInterval reached");
 	    setSyncingIndicator(true)
@@ -1208,7 +1208,7 @@ function syncTransactional() {
                         localStorage.setItem('ServerName', $.trim(rowsArray[0].paramvalue));
                         localStorage.setItem('DOCSERVER', $.trim(rowsArray[0].paramvalue) + "/api/DocumentService?");
                         currentlySyncing = true;
-                        
+
                         opMessage("SYNC:TRANSACTIONAL calling ZGW_GET_JOB_DETAILS");
                         //requestAzureData("ZGW_GET_JOB_DETAILS", localStorage.getItem('MobileUser')) //AZURE
                         requestAzureData("ZGW_MAM30_001_GET_JOB_DETAILS", localStorage.getItem('MobileUser'))//changes for CR work bundling
@@ -1228,10 +1228,10 @@ function syncTransactional() {
 
 
 	}
-	 
-	 
-	 
-	 
+
+
+
+
 	}
 
 
@@ -1268,7 +1268,7 @@ if (Postingazuredataflag) {
 		UploadSQLStatement+=" select 'JobClose' as type,  '' as extra, id    as id, recordupdated from MyJobClose where state = 'NEW' "
 		UploadSQLStatement+=" union "
 		UploadSQLStatement+=" select 'JobAddWork' as type,  '' as extra, id    as id, recordupdated from MyJobAddWork where state = 'NEW' "
-		UploadSQLStatement+=" union "	
+		UploadSQLStatement+=" union "
 		UploadSQLStatement+=" select 'TimeConf' as type,  '' as extra, id    as id, recordupdated from MyTimeConfs where confno = 'NEW' "
 		UploadSQLStatement+=" union "
 		UploadSQLStatement+=" select 'MPointDoc' as type,   '' as extra,id    as id, recordupdated from MyMpointDocs where state = 'NEW' "
@@ -1279,11 +1279,11 @@ if (Postingazuredataflag) {
 		UploadSQLStatement+=" union "
 		UploadSQLStatement+=" select 'CustomerFeedback' as type,  '' as extra, id    as id, recordupdated from MyFormsResponses where lastupdated='CLOSED' and formname = 'CustomerFeedback' "
 		UploadSQLStatement+=" order by recordupdated asc "
-		 
+
 		html5sql.process(UploadSQLStatement,
 		function(transaction, results, rowsArray){
-		 
-		 
+
+
 		if (rowsArray.length>0) {
 		    opMessage("SYNC:UPLOAD Calling syncUploadAzure");
 
@@ -1297,7 +1297,7 @@ if (Postingazuredataflag) {
 		},
 		function(error, statement){
 			opErrorMessage("Error: " + error.message + " when processing " + statement);
-		}        
+		}
 		);
 
 }
@@ -1316,23 +1316,23 @@ function syncDocuments(){
 				DocSQLStatement+=" union "
 				DocSQLStatement+=" select zurl as type,  '' as extra, id    as id, recordupdated from MyJobDetsDraw where zurl like 'WaitingLiveLink%' "
 				DocSQLStatement+=" order by recordupdated asc "
-			 
+
 			html5sql.process(DocSQLStatement,
 			function(transaction, results, rowsArray){
-			 
-			 
+
+
 			if (rowsArray.length>0) {
 				setSyncingIndicator(true);
 			item = rowsArray[0];
 			syncUploadAzure(item.id,item.type+":0")
 			//syncUploadNew(item.id,item.type)
 			}else{
-			 
+
 			}
 			},
 			function(error, statement){
 				opErrorMessage("Error: " + error.message + " when sync documents processing " + statement);
-			}        
+			}
 			);
 
 	}
@@ -1401,7 +1401,7 @@ function syncReference() {
 							        requestAzureData("ZGW_MAM30_031_REFDATA_T3_SRVModel", "");
 							        requestAzureData("ZGW_MAM30_031_REFDATA_T3_SRVManufacturer", "");
 							        getFormsDL();
-							       
+
 							    }
 
 							},
@@ -1439,7 +1439,7 @@ function updateOrderEquipment(orderno, property, funcloc, equipment)
 	 },
 	 function(error, statement){
 		 opErrorMessage("Error: " + error.message + " when updateOrderEquipment processing " + statement);
-	 }        
+	 }
 	);
 }
 
@@ -1453,7 +1453,7 @@ function updateOrderAddress(orderno, house, houseno, street, district, city, pos
 	 },
 	 function(error, statement){
 		 opErrorMessage("Error: " + error.message + " when updateOrderAddress processing " + statement);
-	 }        
+	 }
 	);
 }
 function updateNotifLatLong(notifno, fname, latlong)
@@ -1467,7 +1467,7 @@ res=notifno.split("|");
 	 },
 	 function(error, statement){
 		 opErrorMessage("Error: " + error.message + " when updateNotifLatLong processing " + statement);
-	 }        
+	 }
 	);
 }
 function updateOrderLatLong(orderno, fname, latlong)
@@ -1479,7 +1479,7 @@ function updateOrderLatLong(orderno, fname, latlong)
 	 },
 	 function(error, statement){
 		 opErrorMessage("Error: " + error.message + " when updateOrderLatLong processing " + statement);
-	 }        
+	 }
 	);
 }
 
@@ -1523,11 +1523,11 @@ function updateOperationStatus(orderno, opno, code, status)
 		},
 		function(error, statement){
 			opErrorMessage("Error: " + error.message + " when InsertOperationStatus processing " + statement);
-		}        
+		}
 		);
 	},
 	function(error, statement){
-		opErrorMessage("Error: " + error.message + " when insertOperationStatus processing " + statement);          
+		opErrorMessage("Error: " + error.message + " when insertOperationStatus processing " + statement);
 
 	}
 	);
@@ -1544,7 +1544,7 @@ function updateMeasurementDocsState(orderno, opno, state)
 
 	},
 	function(error, statement){
-		opErrorMessage("Error: " + error.message + " when Updateing mympointdocs state " + statement);          
+		opErrorMessage("Error: " + error.message + " when Updateing mympointdocs state " + statement);
 
 	}
 	);
@@ -1562,7 +1562,7 @@ function createNewStatus(orderno, opno, code, status)
 	},
 	function(error, statement){
 		opErrorMessage("Error: " + error.message + " when InsertOperationStatus processing " + statement);
-	}        
+	}
 	);
 
 }
@@ -1578,7 +1578,7 @@ function updateJobDetsStatus(orderno, opno, status)
 
 	},
 	function(error, statement){
-		opErrorMessage("Error: " + error.message + " when insertOperationStatus processing " + statement);          
+		opErrorMessage("Error: " + error.message + " when insertOperationStatus processing " + statement);
 
 	}
 	);
@@ -1595,7 +1595,7 @@ function updateJobDetsDateTime(orderno, opno)
 
 	},
 	function(error, statement){
-		opErrorMessage("Error: " + error.message + " when insertOperationStatus processing " + statement);          
+		opErrorMessage("Error: " + error.message + " when insertOperationStatus processing " + statement);
 
 	}
 	);
@@ -1618,7 +1618,7 @@ function countStatus()
 
 	},
 	function(error, statement){
-		opErrorMessage("Error: " + error.message + " when insertOperationStatus processing " + statement);          
+		opErrorMessage("Error: " + error.message + " when insertOperationStatus processing " + statement);
 
 	}
 	);
@@ -1633,21 +1633,21 @@ function countStatus()
 function createAWSEODNotif(workdate,homedate,empno)
 {
 
-	
+
 
 	wdate=convertEODDate(workdate).split(" ")
 	hdate=convertEODDate(homedate).split(" ")
-	
+
 	html5sql.process("INSERT INTO MyNotifications (notifno , type, startdate, starttime, enddate, endtime, shorttext) VALUES ("+
 					 "'NEW','Z7','"+wdate[0]+"','"+wdate[1]+"','"+hdate[0]+"','"+hdate[1]+"','Day End Travel/"+getDate()+"/"+empno+"');",
 	 function(transaction, results, rowsArray){
 
-		
+
 	 },
 	 function(error, statement){
-		 opErrorMessage("Error: " + error.message + " when insertEOD Notif processing " + statement);   
-		
-	 } )   
+		 opErrorMessage("Error: " + error.message + " when insertEOD Notif processing " + statement);
+
+	 } )
 
 }
 //added parameter equipmentstatus for CREOL
@@ -1694,11 +1694,11 @@ html5sql.process("INSERT INTO  MyJobClose (orderno , opno, notifno, details, emp
 
 			updateOperationStatus(order, opno, scode ,sdesc)
 			if(oSwitchFlooding){
-				
+
 				 updateFormsResponseDate("Flooding",order,opno)
-				
+
 			 }else{
-				 
+
 				 deleteFormsResponseDate("Flooding",order,opno)
 			 }
 			 if(oSwitchPollution){
@@ -1711,186 +1711,186 @@ html5sql.process("INSERT INTO  MyJobClose (orderno , opno, notifno, details, emp
 			 }else{
 				 deleteFormsResponseDate("CustomerFeedback",order,opno)
 			 }
-			
+
 	 },
 	 function(error, statement){
-			
+
 		 opErrorMessage("Error: " + error.message + " when Creating JobClose  " + statement);
-	 }        
+	 }
 	);
 }
 function getAssetHistory(fl)
 {
 	var sqlStatement="select * from MyMenuBar where subitem = 'Asset history'"
-	
+
 	html5sql.process(sqlStatement,
 		function(transaction, results, rowsArray){
 			if(rowsArray<1){
-				
+
 				return "";
 			}else{
-				
+
 				url=rowsArray[0].command
-				
+
 				url=url.replace("{SUPUSERNAME}",localStorage.getItem("MobileUser"))
 				//url+="&TPLNR="+fl
 				url=url.replace("{TPLNR}",fl)
-				//window.open(url, "_blank", 'location=yes,closebuttoncaption=Return') 
-				window.open(url, "_system") 
+				//window.open(url, "_blank", 'location=yes,closebuttoncaption=Return')
+				window.open(url, "_system")
 			}
-			
+
 		 },
 		 function(error, statement){
 			 opErrorMessage("Error: " + error.message + " when getAssetHistory processing " + statement);
-		 }        
+		 }
 		);
 }
 
 function updateDocumentState(id,status)
 {
 
-	
+
 	var sqlStatement="UPDATE MyFormsResponses SET lastupdated='"+status+"',status='"+status+"' where id = '"+id+"'";
-	
+
 	html5sql.process(sqlStatement,
 		 function(){
-		
+
 		//buildJobDocsTable()
-				
+
 		 },
 		 function(error, statement){
 
 			 opErrorMessage("Error: " + error.message + " when updateDocumentState processing " + statement);
-		 }        
+		 }
 		);
 }
 function updatePhotoState(id,status)
 {
 
-	
+
 	var sqlStatement="UPDATE MyJobsPhotos SET status='"+status+"' where id = '"+id+"'";
-	
+
 	html5sql.process(sqlStatement,
 		 function(){
-		
-				
+
+
 		 },
 		 function(error, statement){
 
 			 opErrorMessage("Error: " + error.message + " when updatePhotoState processing " + statement);
-		 }        
+		 }
 		);
 }
 function updateAttachmentState(id,status)
 {
 
-	
+
 	var sqlStatement="UPDATE MyJobsDocs SET status='"+status+"' where id = '"+id+"'";
-	
+
 	html5sql.process(sqlStatement,
 		 function(){
-		
-				
+
+
 		 },
 		 function(error, statement){
 
 			 opErrorMessage("Error: " + error.message + " when updateAttachmentState processing " + statement);
-		 }        
+		 }
 		);
 }
 function updateAttachmentStatus(url,name,type,size,lastmod,status)
 {
 
-	
+
 	var sqlStatement="UPDATE MyJobsDocs SET status='"+status+"';"
-	sqlMyJobsDocs="";	
+	sqlMyJobsDocs="";
 	html5sql.process(sqlStatement,
 		 function(){
-		
+
 				if(url=="*"){
-					
+
 					BuildDocumentsTable()
 				}
 		 },
 		 function(error, statement){
 			 opErrorMessage("Error: " + error.message + " when updateAttachmentStatus processing " + statement);
-		 }        
+		 }
 		);
 }
 function deleteAllDocs()
 {
 
-	
+
 	var sqlStatement="delete from MyJobsDocs"
-	
+
 	html5sql.process(sqlStatement,
 		 function(){
-		
-				
+
+
 		opMessage("All Docs deleted")
-				
+
 		 },
 		 function(error, statement){
 			 opErrorMessage("Error: " + error.message + " when deleteAllDocs processing " + statement);
-			
-		 }        
+
+		 }
 		);
 }
 function addAttachment(orderno,opno, url, name, type, size)
 {
 
-	
+
 	var sqlstatement="insert into MyJobsDocs (orderno,opno, url, name, type, size, status) values ("+
 	"'"+orderno+"','"+opno+"','"+url+"','"+name+"','"+type+"','"+size+"','Local')";
-	
+
 	html5sql.process(sqlstatement,
 		function(transaction, results, rowsArray){
-			
-			
+
+
 		 },
 		 function(error, statement){
 			 opErrorMessage("Error: " + error.message + " when addAttachment processing " + statement);
-		 }        
+		 }
 		);
 }
 function updateDocumemntsTable(url, name,type,size,lastmod)
 {
 
-	
-	
-	
+
+
+
 	var sqlStatement="select * from MyJobsDocs where url  = '"+url+"' and name = '"+name+"';"
-	
+
 	html5sql.process(sqlStatement,
 		function(transaction, results, rowsArray){
 			if(rowsArray<1){
 				sqlMyJobsDocs+="insert into MyJobsDocs (url, name,type,size,lastmod, status) values ("+
 				"\""+url+"\","+"\""+name+"\","+"\""+type+"\","+"\""+size+"\","+"\""+lastmod+"\", \"REMOTE\");" // New Download
 			}else if((rowsArray[0].type==type)&&(rowsArray[0].size==size)&&(rowsArray[0].lastmod==lastmod)){
-				
+
 				sqlMyJobsDocs+="UPDATE MyJobsDocs SET status = \"LOCAL\" , size = \""+size+"\" , lastmod = \""+lastmod+"\" where id = "+rowsArray[0].id+";" // File not changed so dont Download
 			}else{
 				sqlMyJobsDocs+="UPDATE MyJobsDocs SET status = \"REMOTECHANGED\" , type = \""+type+"\" , size = \""+size+"\" , lastmod = \""+lastmod+"\" where id = "+rowsArray[0].id+";"// File Changed so download
 			}
-			
+
 		 },
 		 function(error, statement){
 			 opErrorMessage("Error: " + error.message + " when updateDocumemntsTable processing " + statement);
-		 }        
+		 }
 		);
 }
 function updateDocsTable()
 {
-	
+
 	html5sql.process(sqlMyJobsDocs,
 			function(transaction, results, rowsArray){
-						
+
 
 				html5sql.process("select count(*)  as tot,  (select count(*) from MyJobsDocs where status = \"DELETE\") as del,  " +
 						"(select count(*) from MyJobsDocs where status = \"REMOTE\") as ins, "+
 						"(select count(*) from MyJobsDocs where status = \"REMOTECHANGED\") as mod, "+
 						"(select count(*) from MyJobsDocs where status = \"LOCAL\") as loc from MyJobsDocs",
-		
+
 						function(transaction, results, rowsArray){
 
 							document.getElementById('DocTot').innerHTML=rowsArray[0].tot
@@ -1898,92 +1898,92 @@ function updateDocsTable()
 							document.getElementById('DocNew').innerHTML=rowsArray[0].ins
 							document.getElementById('DocMod').innerHTML=rowsArray[0].mod
 							document.getElementById('DocLoc').innerHTML=rowsArray[0].loc
-							
+
 							html5sql.process("select * from MyJobsDocs where status = \"REMOTE\" or status = \"REMOTECHANGED\"",
-					
+
 									function(transaction, results, rowsArray){
 
 										oProgIndDL.setPercentValue(5);
 										oProgIndDL.setDisplayValue("5" + "%");
 										percentagedownloaded=0;
 										fileDownloadCnt=0;
-										
+
 										filesToDownload = rowsArray;
-										
+
 										checkFileDownload()
 									 },
 									 function(error, statement){
 										 opErrorMessage("Error: " + error.message + " when updateDocumemntsTable1 processing " + statement);
-									 }        
+									 }
 									);
 
 						 },
 						 function(error, statement){
 							 opErrorMessage("Error: " + error.message + " when updateDocumemntsTable2 processing " + statement);
-						 }        
+						 }
 						);
 			 },
 			 function(error, statement){
 				 opErrorMessage("Error: " + error.message + " when updateDocumemntsTable3 processing " + statement);
-			 }        
+			 }
 			);
-	
+
 
 }
 function updateFormsResponseDate(formname, order,opno)
 {
-	
-	
-	
+
+
+
 	var sqlStatement="UPDATE MyFormsResponses "+
 				 "SET lastupdated='CLOSED', recordupdated=STRFTIME('%Y-%m-%d %H:%M:%f', 'NOW') "+
 				 "where orderno = '"+order+"' and opno = '"+opno+"' and formname = '"+formname+"' ;"
-	
-		
+
+
    opMessage("About to Update Formdata Date "+order+":"+opno+":"+formname)
-  
+
 	html5sql.process(sqlStatement,
 		 function(transaction, results, rowsArray){
-		
-		opMessage("Formdata Updated OK")
-		
 
-		
+		opMessage("Formdata Updated OK")
+
+
+
 		 },
 		 function(error, statement){
-			
+
 			 opErrorMessage("Error: " + error.message + " when Updateing FormsResponses Date" );
-			
-		 }        
+
+		 }
 		);
-	
+
 }
 function deleteFormsResponseDate(formname, order,opno)
 {
-	
-	
-	
+
+
+
 	var sqlStatement="DELETE from MyFormsResponses "+
 				 "where orderno = '"+order+"' and opno = '"+opno+"' and formname = '"+formname+"' ;"
-	
-		
+
+
    opMessage("About to Delete Formdata "+order+":"+opno+":"+formname)
-  
+
 	html5sql.process(sqlStatement,
 		 function(transaction, results, rowsArray){
-		
-		opMessage("Formdata Deleted OK")
-		
 
-		
+		opMessage("Formdata Deleted OK")
+
+
+
 		 },
 		 function(error, statement){
-			
+
 			 opErrorMessage("Error: " + error.message + " when Deleting FormsResponses" );
-			
-		 }        
+
+		 }
 		);
-	
+
 }
 
 function renameDocument(id){
@@ -2007,7 +2007,7 @@ function renameDocument(id){
 	function(error, statement){
 		opErrorMessage("Error: " + error.message + " when renameDocument "+statement );
 
-	}        
+	}
 	);
 }
 function uploadDocument_Image_NotUsed(id){
@@ -2025,7 +2025,7 @@ function uploadDocument_Image_NotUsed(id){
 
 
 
-			createBase64FormXML(rowsArray[0].htmlbody,rowsArray[0].formdesc+".html",id,rowsArray[0].formdesc)	
+			createBase64FormXML(rowsArray[0].htmlbody,rowsArray[0].formdesc+".html",id,rowsArray[0].formdesc)
 
 		}
 
@@ -2034,7 +2034,7 @@ function uploadDocument_Image_NotUsed(id){
 	function(error, statement){
 
 		opErrorMessage("Error: " + error.message + " when uploadDocument_Image_NotUsed "+statement );
-	}        
+	}
 	);
 }
 function uploadDocument(id){
@@ -2053,7 +2053,7 @@ function uploadDocument(id){
 
 			formHTML=window.btoa(HTMLFormStart+y+HTMLFormEnd)
 
-			createBase64FormXML(formHTML,rowsArray[0].formdesc+".html",id,rowsArray[0].formdesc)	
+			createBase64FormXML(formHTML,rowsArray[0].formdesc+".html",id,rowsArray[0].formdesc)
 
 		}
 
@@ -2062,7 +2062,7 @@ function uploadDocument(id){
 	function(error, statement){
 
 		opErrorMessage("Error: " + error.message + " when uploadDocument "+statement );
-	}        
+	}
 	);
 }
 function uploadAttachment(id){
@@ -2078,7 +2078,7 @@ function uploadAttachment(id){
 
 		if(rowsArray.length>0){
 
-			getBase64FromAttachmentUrl(rowsArray[0].url,rowsArray[0].id,rowsArray[0].name,rowsArray[0].type)	
+			getBase64FromAttachmentUrl(rowsArray[0].url,rowsArray[0].id,rowsArray[0].name,rowsArray[0].type)
 
 		}
 
@@ -2087,7 +2087,7 @@ function uploadAttachment(id){
 	function(error, statement){
 
 		opErrorMessage("Error: " + error.message + " when uploadAttachment "+statement );
-	}        
+	}
 	);
 
 }
@@ -2098,31 +2098,31 @@ function deleteAttachment(id){
         title: "Are you sure?",
         actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
 			 onClose: function(oAction){
-				
+
 				 if(oAction=="YES"){
-					 
+
 					 sqlStatement="Delete from MyJobsDocs where id =  '"+id+"' ;"
-						 
+
 
 
 
 					html5sql.process(sqlStatement,
 					function(transaction, results, rowsArray){
 
-					
+
 						buildJobDocsTable()
 
 					},
 					function(error, statement){
 
 						opErrorMessage("Error: " + error.message + " when deleteAttachment "+statement );
-					}        
+					}
 					);
 				 }
 			 }
       }
     );
-	
+
 }
 function deleteDocument(id){
 	var sqlStatement=""
@@ -2131,59 +2131,59 @@ function deleteDocument(id){
          title: "Are you sure?",
          actions: [sap.m.MessageBox.Action.YES, sap.m.MessageBox.Action.NO],
 			 onClose: function(oAction){
-				
+
 				 if(oAction=="YES"){
-					 
+
 					 sqlStatement="Delete from MyFormsResponses where id =  '"+id+"' ;"
-						 
+
 
 
 
 					html5sql.process(sqlStatement,
 					function(transaction, results, rowsArray){
 
-					
+
 						buildJobDocsTable()
 
 					},
 					function(error, statement){
 
 						opErrorMessage("Error: " + error.message + " when deleteDocument "+statement );
-					}        
+					}
 					);
 				 }
 			 }
        }
      );
-	
+
 }
 function updateFormDescription(id, desc)
 {
-	
+
 	var sqlstatement=""
-	
+
 	sqlStatement="UPDATE MyFormsResponses "+
 				 "SET formdesc='"+desc+"'" +
 				 "where id = '"+id+"' ;"
-	
-		
-   
-  
+
+
+
+
 	html5sql.process(sqlStatement,
 		 function(transaction, results, rowsArray){
 		buildJobDocsTable()
 		opMessage("Formdata Renamed")
-		
 
-		
+
+
 		 },
 		 function(error, statement){
-			
+
 			 opErrorMessage("Error: " + error.message + " whenupdateFormDescription "+statement );
-			
-		 }        
+
+		 }
 		);
-	
+
 }
 function InsertFormDetails(url, name,type,desc)
 {
@@ -2193,52 +2193,52 @@ function InsertFormDetails(url, name,type,desc)
 			function(transaction, results, rowsArray){
 				if( rowsArray.length > 0) {
 					FormSQL="UPDATE MyForms SET type = '"+type+"' , url = '"+url+"' , description = '"+desc+"'  WHERE name = '"+name+"';";
-					console.log("Updating "+name)	
+					console.log("Updating "+name)
 					}else{
-					console.log("Inserting "+name)	
+					console.log("Inserting "+name)
 					FormSQL="INSERT INTO  MyForms (name, type, url, description) VALUES ("+"'"+name+"','"+type+"','"+url+"','"+desc+"');"
 					}
-				 
+
 				 html5sql.process(FormSQL,
 				 function(){
 					opMessage("Form inserted/updated OK ")
-					
+
 				 },
 				 function(error, statement){
 					 opErrorMessage("Error: " + error.message + " when MyForms processing " + statement);
-					
-				 }        
+
+				 }
 				);
 			},
 			function(error, statement){
-				opErrorMessage("Error: " + error.message + " when SetConfigParam processing " + statement);  
-				
+				opErrorMessage("Error: " + error.message + " when SetConfigParam processing " + statement);
+
 			}
 		);
 
-	
-		
-		
-	
+
+
+
+
 }
 // need to sort out not a delete if the form already exists
 
 
 function createFormsResponse(formname, wc,plant,notifno,order,opno,user,content,htmlbody,htmlreadonly,mode,type)
 {
-var sqlStatement=""	
-	
+var sqlStatement=""
+
 if(formname.indexOf("~")>0){
 	x=formname.split("~");
 	formname=x[0]
-}	
-var fdesc=""	
+}
+var fdesc=""
 	if (mode=="Close"){ //Called from the Close Screen
 		state = "Close"
 			fdesc=""
 	}else{
 		state="FORM"
-		fdesc=formname	
+		fdesc=formname
 	}
 
 	if(selectedFormId>0)
@@ -2249,39 +2249,39 @@ var fdesc=""
 		"htmlreadonly='"+escape(htmlreadonly)+"', "+
 		"date='"+getDate()+"', "+
 		"time='"+getTime()+"', "+
-		
+
 		"state='"+state+"', "+"status='Local' where id = "+selectedFormId+";"
 
 	}else{
 		sqlStatement="INSERT INTO  MyFormsResponses (formname, formdesc, lastupdated, wc,plant, notifno,orderno , opno, user, contents, htmlbody,htmlreadonly, date , time , state,status) VALUES ("+
 		"'"+formname+"','"+fdesc+"','"+type+"','"+wc+"','"+plant+"','"+notifno+"','"+order+"','"+opno+"','"+user+"','"+escape(content)+"','"+escape(htmlbody)+"','"+escape(htmlreadonly)+"','"+getDate()+"',"+"'"+getTime()+"',"+"'"+state+"',"+"'Local');"
 
-	}	
-		
-	
+	}
+
+
 		html5sql.process(sqlStatement,
 				 function(transaction, results, rowsArray){
-			
+
 			  opMessage("Formdata inserted OK ")
-			
+
 				if(formDG5.isOpen()){
 					getCFeedFollowOnState(CurrentOrderNo,CurrentOpNo)
 				}
 			  if (mode=="Forms"){ //Called from the Close Screen
 					buildJobDocsTable()
 				}
-			  
+
 				formForms.close()
 				 },
 				 function(error, statement){
-					
+
 					 opErrorMessage("Error: " + error.message + " when createFormsResponse "+statement );
 					formForms.close()
-				 }        
+				 }
 				);
-		
-		
-	
+
+
+
 }
 function createAWSTConf(order,opno,empid,work_cntr,acttype,reasontype,startdate,starttime,enddate, endtime, actwork,remwork,text,details,finalconf)
 {
@@ -2294,7 +2294,7 @@ function createAWSTConf(order,opno,empid,work_cntr,acttype,reasontype,startdate,
 		 function(error, statement){
 
 			 opErrorMessage("Error: " + error.message + " when createTConf processing " + statement);
-		 }        
+		 }
 		);
 }
 function createMPDocument(order,opno,floc,eq,mpoint,code,val,text)
@@ -2304,27 +2304,27 @@ function createMPDocument(order,opno,floc,eq,mpoint,code,val,text)
 	html5sql.process("INSERT INTO  MyMPointDocs (orderno , opno, funcloc, equipment , meas_point , date , time , code, value, shorttext, state) VALUES ("+
 			 "'"+order+"','"+opno+"','"+floc+"','"+eq+"','"+mpoint+"','"+getDate()+"', '"+getTime()+"','"+code+"','"+val+"','"+text+"','');",
 	 function(){
-		
+
 	 },
 	 function(error, statement){
-		
+
 		 opErrorMessage("Error: " + error.message + " when createMPDoc processing " + statement);
-	 }        
+	 }
 	);
 }
 function updateMPDocument(order,opno,floc,eq,mpoint,code,val,text)
 {
-  
+
 
 	html5sql.process("UPDATE MyMPointDocs set code = '"+code+"' , value = '"+ val+"', shorttext='"+text+"' where orderno = '"+order+"' and opno= '"+opno+"' and meas_point = '"+mpoint +"';",
-			
+
 	 function(){
-		
+
 	 },
 	 function(error, statement){
-		
+
 		 opErrorMessage("Error: " + error.message + " when updateMPDoc processing " + statement);
-	 }        
+	 }
 	);
 }
 function createTConf(order,opno,empid,type,startdate,enddate,duration,finalconf,comments)
@@ -2354,7 +2354,7 @@ function createTConf(order,opno,empid,type,startdate,enddate,duration,finalconf,
 	 function(error, statement){
 
 		 opErrorMessage("Error: " + error.message + " when createTConf processing " + statement);
-	 }        
+	 }
 	);
 }
 
@@ -2371,9 +2371,9 @@ var ReportedBy=localStorage.getItem("MobileUser");
 	 function(error, statement){
 		 //alert("Error: " + error.message + " when createNotification processing " + statement);
 		 opErrorMessage("Error: " + error.message + " when createVehicleDefect processing " + statement);
-	 }        
+	 }
 	);
-	
+
 }
 
 
@@ -2384,7 +2384,7 @@ var ReportedBy=localStorage.getItem("MobileUser");
 //  Create Database Tables
 //
 //*************************************************************************************************************************
-function createTables(callback) { 
+function createTables(callback) {
 	  var d = new Date();
     // d.setDate(d.getDate() + 1);
     //Assumping emptyTables is called during office hours, lastLogoff should happen out of hours. Once set last logoff should happen every 24 hours.
@@ -2452,9 +2452,9 @@ function createTables(callback) {
         'ZPLGDESC TEXT,ZPLGRP TEXT ,ZPRG TEXT ,ZPRGDESC TEXT,ZPROCTYP TEXT ,ZPROJ_CODE TEXT ,ZRECNUM TEXT,ZSERN1 TEXT ,ZSITE TEXT ,ZSITEDESC TEXT,ZSITESGNOFF TEXT,ZSTATUS TEXT ,ZSURV TEXT,ZSURVSUB TEXT,ZSWERK TEXT ,ZSYSCODE TEXT ,' +
         'ZSYSDESC TEXT,ZZASSETTAG TEXT,ZZEQPT_EGI TEXT ,ZZFL_NC TEXT ,ZZW_WW TEXT );' +
 
-        
 
-        'CREATE TABLE IF NOT EXISTS MyJobDets         ( id integer primary key autoincrement,'+ 
+
+        'CREATE TABLE IF NOT EXISTS MyJobDets         ( id integer primary key autoincrement,'+
         " orderid TEXT,ordnoOp TEXT,watercare TEXT, textMess TEXT,reduration TEXT, startTime TEXT,startDate TEXT,pmacttypeText TEXT, pmacttype TEXT, "+
         " workTypeCdx TEXT,workTypeCd TEXT,workTypeCgpx TEXT,workTypeCgp TEXT,ordType TEXT,shortText TEXT,priorityx TEXT,priority TEXT, "+
         " statusCrtim TEXT,statusCrdat TEXT,statusDescL TEXT,statusDescS  TEXT,status TEXT,plant TEXT,myalmScenario TEXT,workCntrOper TEXT, "+
@@ -2467,9 +2467,9 @@ function createTables(callback) {
         " zzretc TEXT,zzretn TEXT,zzrettn TEXT,zzemai TEXT,zzgisx TEXT,zzgisy TEXT,zzmogisx TEXT,zzmogisy TEXT, "+
             " recordupdated TIMESTAMP DATETIME DEFAULT(STRFTIME(\'%Y-%m-%d %H:%M:%f\', \'NOW\'))); "+
         'CREATE TABLE IF NOT EXISTS MyJobDetsMPcodes       ( id integer primary key autoincrement, code_gp TEXT, code TEXT, code_text TEXT,recordupdated TIMESTAMP DATETIME DEFAULT(STRFTIME(\'%Y-%m-%d %H:%M:%f\', \'NOW\')));'+
-        'CREATE TABLE IF NOT EXISTS MyJobDetsMPoints       ( id integer primary key autoincrement, meas_point TEXT, object_id TEXT,object_desc TEXT, psort TEXT,pttxt TEXT, format TEXT,no_char TEXT, no_deci TEXT,code_gp TEXT, code TEXT, unit_meas TEXT,read_from TEXT,recordupdated TIMESTAMP DATETIME DEFAULT(STRFTIME(\'%Y-%m-%d %H:%M:%f\', \'NOW\')));'+  
-        'CREATE TABLE IF NOT EXISTS MyJobDetsLoch          ( id integer primary key autoincrement, orderno TEXT, notification_no TEXT,not_type TEXT, not_date TEXT,not_time TEXT, not_shtxt TEXT,not_order TEXT, meter_no TEXT,meter_rdg TEXT, work_type TEXT, order_type TEXT, op_txt TEXT, order_date TEXT, order_status TEXT, recordupdated TIMESTAMP DATETIME DEFAULT(STRFTIME(\'%Y-%m-%d %H:%M:%f\', \'NOW\')));'+  
-        'CREATE TABLE IF NOT EXISTS MyJobDetsDraw          ( id integer primary key autoincrement, orderno TEXT, zact TEXT,zite TEXT, zmandatoryfield TEXT,zurl TEXT, nodeid TEXT,fname TEXT, mime TEXT,recordupdated TIMESTAMP DATETIME DEFAULT(STRFTIME(\'%Y-%m-%d %H:%M:%f\', \'NOW\')));'+  
+        'CREATE TABLE IF NOT EXISTS MyJobDetsMPoints       ( id integer primary key autoincrement, meas_point TEXT, object_id TEXT,object_desc TEXT, psort TEXT,pttxt TEXT, format TEXT,no_char TEXT, no_deci TEXT,code_gp TEXT, code TEXT, unit_meas TEXT,read_from TEXT,recordupdated TIMESTAMP DATETIME DEFAULT(STRFTIME(\'%Y-%m-%d %H:%M:%f\', \'NOW\')));'+
+        'CREATE TABLE IF NOT EXISTS MyJobDetsLoch          ( id integer primary key autoincrement, orderno TEXT, notification_no TEXT,not_type TEXT, not_date TEXT,not_time TEXT, not_shtxt TEXT,not_order TEXT, meter_no TEXT,meter_rdg TEXT, work_type TEXT, order_type TEXT, op_txt TEXT, order_date TEXT, order_status TEXT, recordupdated TIMESTAMP DATETIME DEFAULT(STRFTIME(\'%Y-%m-%d %H:%M:%f\', \'NOW\')));'+
+        'CREATE TABLE IF NOT EXISTS MyJobDetsDraw          ( id integer primary key autoincrement, orderno TEXT, zact TEXT,zite TEXT, zmandatoryfield TEXT,zurl TEXT, nodeid TEXT,fname TEXT, mime TEXT,recordupdated TIMESTAMP DATETIME DEFAULT(STRFTIME(\'%Y-%m-%d %H:%M:%f\', \'NOW\')));'+
         'CREATE TABLE IF NOT EXISTS MyJobsDetsEQ ( id integer primary key autoincrement, equnr TEXT, obj_type TEXT, obj_type_desc TEXT, start_date TEXT,manfacture TEXT,manparno TEXT,manserno TEXT,user_status_code TEXT,swerk TEXT ,swerk_desc TEXT,profile TEXT ,device TEXT ,device_info TEXT ,install_date TEXT , install_loc_desc TEXT,recordupdated TIMESTAMP DATETIME DEFAULT(STRFTIME(\'%Y-%m-%d %H:%M:%f\', \'NOW\')));'+
         'CREATE TABLE IF NOT EXISTS MyJobsDetsATTR ( id integer primary key autoincrement, equnr TEXT ,classnum TEXT ,klassentext TEXT ,charact TEXT ,charact_desc TEXT,value TEXT,recordupdated TIMESTAMP DATETIME DEFAULT(STRFTIME(\'%Y-%m-%d %H:%M:%f\', \'NOW\')));'+
         'CREATE TABLE IF NOT EXISTS MyJobDetsMeasCodes ( id integer primary key autoincrement, code_gp TEXT ,code TEXT ,code_text TEXT ,recordupdated TIMESTAMP DATETIME DEFAULT(STRFTIME(\'%Y-%m-%d %H:%M:%f\', \'NOW\')));'+
@@ -2492,7 +2492,7 @@ function createTables(callback) {
 					 'CREATE TABLE IF NOT EXISTS MyNewJobs     			( id integer primary key autoincrement, type TEXT, defect TEXT, mpoint TEXT, mpval TEXT, shorttext TEXT, longtext TEXT, description TEXT, date TEXT, time TEXT, enddate TEXT, endtime TEXT, funcloc TEXT, equipment TEXT, cattype TEXT, codegroup TEXT, coding TEXT, activitycodegroup TEXT, activitycode TEXT, activitytext TEXT, prioritytype TEXT, priority TEXT, reportedby TEXT, state TEXT, assignment TEXT, spec_reqt TEXT, assig_tome TEXT, userid TEXT, eq_status TEXT, breakdown TEXT,recordupdated TIMESTAMP DATETIME DEFAULT(STRFTIME(\'%Y-%m-%d %H:%M:%f\', \'NOW\')));'+
 					 'CREATE TABLE IF NOT EXISTS MyWorkConfig     		( id integer primary key autoincrement, paramname TEXT, paramvalue TEXT,recordupdated TIMESTAMP DATETIME DEFAULT(STRFTIME(\'%Y-%m-%d %H:%M:%f\', \'NOW\')));'+
 					 'CREATE TABLE IF NOT EXISTS MyUserDets             ( id integer primary key autoincrement, mobileuser TEXT, workcenter TEXT, scenario TEXT, fullname TEXT, vehiclereg TEXT, employeeid TEXT, user TEXT, password TEXT,pincode TEXT,docserver TEXT, maptype TEXT,recordupdated TIMESTAMP DATETIME DEFAULT(STRFTIME(\'%Y-%m-%d %H:%M:%f\', \'NOW\')));'+
-					 'CREATE TABLE IF NOT EXISTS MyRefUsers    			(  id integer primary key autoincrement, userid TEXT, scenario TEXT, plant TEXT, maintplant TEXT, workcenter TEXT, plannergroup TEXT, plannergroupplant TEXT, storagegroup TEXT, storageplant TEXT, partner TEXT, partnerrole TEXT, funclocint TEXT, funcloc TEXT, compcode TEXT, employeeno TEXT, equipment TEXT, firstname TEXT, lastname TEXT, telno TEXT,recordupdated TIMESTAMP DATETIME DEFAULT(STRFTIME(\'%Y-%m-%d %H:%M:%f\', \'NOW\')));'+													
+					 'CREATE TABLE IF NOT EXISTS MyRefUsers    			(  id integer primary key autoincrement, userid TEXT, scenario TEXT, plant TEXT, maintplant TEXT, workcenter TEXT, plannergroup TEXT, plannergroupplant TEXT, storagegroup TEXT, storageplant TEXT, partner TEXT, partnerrole TEXT, funclocint TEXT, funcloc TEXT, compcode TEXT, employeeno TEXT, equipment TEXT, firstname TEXT, lastname TEXT, telno TEXT,recordupdated TIMESTAMP DATETIME DEFAULT(STRFTIME(\'%Y-%m-%d %H:%M:%f\', \'NOW\')));'+
 					 'CREATE TABLE IF NOT EXISTS MyRefPriorityTypes     (  id integer primary key autoincrement, scenario TEXT, type TEXT, priority TEXT, description TEXT,recordupdated TIMESTAMP DATETIME DEFAULT(STRFTIME(\'%Y-%m-%d %H:%M:%f\', \'NOW\')));'+
 					 'CREATE TABLE IF NOT EXISTS MyVehiclesDefault     	(  sysid integer primary key autoincrement, equipment TEXT, reg TEXT, id TEXT, partner TEXT, level TEXT, sequence TEXT,mpoint TEXT,mpointdesc TEXT, mpointlongtext TEXT,description TEXT,recordupdated TIMESTAMP DATETIME DEFAULT(STRFTIME(\'%Y-%m-%d %H:%M:%f\', \'NOW\')));'+
 					 'CREATE TABLE IF NOT EXISTS MyVehicles     		(  sysid integer primary key autoincrement, reg TEXT, id TEXT, partner TEXT, mpoints TEXT,description TEXT,recordupdated TIMESTAMP DATETIME DEFAULT(STRFTIME(\'%Y-%m-%d %H:%M:%f\', \'NOW\')));'+
@@ -2504,7 +2504,7 @@ function createTables(callback) {
 					 'CREATE TABLE IF NOT EXISTS LogFile    			( id integer primary key autoincrement, datestamp TEXT, type TEXT, message TEXT,recordupdated TIMESTAMP DATETIME DEFAULT(STRFTIME(\'%Y-%m-%d %H:%M:%f\', \'NOW\')));'+
 					 'CREATE TABLE IF NOT EXISTS AssetDetails     		( id integer primary key autoincrement,PLAN_PLANT TEXT, MTCE_PLANT TEXT, SITE TEXT, FUNC_LOC TEXT, FUNC_LOC_DESC TEXT, EQUIP TEXT, EQUIP_DESC TEXT, PLANT_GROUP TEXT, ASSET_TYPE TEXT, ASSET_DESC TEXT, MAKE TEXT, MODEL TEXT, SERIAL_NO TEXT, OBJ_TYPE TEXT, EQTYPE_DESC TEXT, EFUNC_TYPE TEXT, FTYPE_DESC TEXT, SYS_CODE TEXT, SCODE_DESC TEXT, ASSET_TAG TEXT, START_UP_DATE TEXT, STATUS TEXT,recordupdated TIMESTAMP DATETIME DEFAULT(STRFTIME(\'%Y-%m-%d %H:%M:%f\', \'NOW\')));'+
 					 'CREATE TABLE IF NOT EXISTS FuncLocs			  	( id integer primary key autoincrement, flid TEXT, description TEXT, swerk TEXT, level TEXT, parentid TEXT, children TEXT,recordupdated TIMESTAMP DATETIME DEFAULT(STRFTIME(\'%Y-%m-%d %H:%M:%f\', \'NOW\')));'+
-					 'CREATE TABLE IF NOT EXISTS MyMenuBar 		        ( id integer primary key autoincrement, scenario TEXT, level TEXT, item TEXT, position TEXT, type TEXT,  subitem TEXT, command TEXT, item2 TEXT,recordupdated TIMESTAMP DATETIME DEFAULT(STRFTIME(\'%Y-%m-%d %H:%M:%f\', \'NOW\')));'+	
+					 'CREATE TABLE IF NOT EXISTS MyMenuBar 		        ( id integer primary key autoincrement, scenario TEXT, level TEXT, item TEXT, position TEXT, type TEXT,  subitem TEXT, command TEXT, item2 TEXT,recordupdated TIMESTAMP DATETIME DEFAULT(STRFTIME(\'%Y-%m-%d %H:%M:%f\', \'NOW\')));'+
 					 'CREATE TABLE IF NOT EXISTS REFPAICODES			( id integer primary key autoincrement, scenario TEXT, userid TEXT, level TEXT, stsma TEXT, plant TEXT, work_cntr TEXT, catalogue TEXT, codegrp TEXT, kurztext_group TEXT, code TEXT, kurztext_code TEXT,recordupdated TIMESTAMP DATETIME DEFAULT(STRFTIME(\'%Y-%m-%d %H:%M:%f\', \'NOW\')));'+
 					 'CREATE TABLE IF NOT EXISTS REFNOTIFICATIONTYPES	( id integer primary key autoincrement, scenario TEXT, userid TEXT, level_number TEXT, notiftype TEXT, notifdesc TEXT, notifprofile TEXT, priotype TEXT,priority TEXT, prioritydesc TEXT,recordupdated TIMESTAMP DATETIME DEFAULT(STRFTIME(\'%Y-%m-%d %H:%M:%f\', \'NOW\')));'+
 					 'CREATE TABLE IF NOT EXISTS REFVARIANCESRFV		( id integer primary key autoincrement, scenario TEXT, userid TEXT, plant TEXT, work_cntr TEXT, job_activity TEXT, dev_reason TEXT, dev_reas_txt TEXT, mandate TEXT,recordupdated TIMESTAMP DATETIME DEFAULT(STRFTIME(\'%Y-%m-%d %H:%M:%f\', \'NOW\')));'+
@@ -2538,19 +2538,19 @@ function createTables(callback) {
                              //we add the columns here as they are read from the database
 						     setColumnOrderAssetListEditUpdate();
 						     setColumnOrderAssetListParent();
-						   
+
 							busycreateDB.close()
 							callback()
-							
-							
-							
+
+
+
 						 },
 						 function(error, statement){
-							
+
 							 opErrorMessage("Error: " + error.message + " when create processing " + statement);
-							
-							 
-						 }        
+
+
+						 }
 				);
 
 
@@ -2563,90 +2563,90 @@ function buildDirsErrorHandler(error){
 function buildDirs(fs) {
 
 
-	
-    var entry=fs; 
 
-    entry.getDirectory("MyJobs", {create: true, exclusive: false}, 
+    var entry=fs;
+
+    entry.getDirectory("MyJobs", {create: true, exclusive: false},
     		function(dir){
 		    	 console.log("Created dir "+dir.name);
-		    	  entry.getDirectory("MyJobs/Global", {create: true, exclusive: false}, 
+		    	  entry.getDirectory("MyJobs/Global", {create: true, exclusive: false},
 		    	    		function(dir){
-		    			    	 console.log("Created dir "+dir.name); 
-		    			    	 entry.getDirectory("MyJobs/Private", {create: true, exclusive: false}, 
+		    			    	 console.log("Created dir "+dir.name);
+		    			    	 entry.getDirectory("MyJobs/Private", {create: true, exclusive: false},
 		    			    	    		function(dir){
 		    			    			    	 console.log("Created dir "+dir.name);
-		    			    			    	 entry.getDirectory("MyJobs/Private/Download", {create: true, exclusive: false}, 
+		    			    			    	 entry.getDirectory("MyJobs/Private/Download", {create: true, exclusive: false},
 		    			    			    	    		function(dir){
-		    			    			    			    	 console.log("Created dir "+dir.name); 
-		    			    			    			    	 entry.getDirectory("MyJobs/Private/Upload", {create: true, exclusive: false}, 
+		    			    			    			    	 console.log("Created dir "+dir.name);
+		    			    			    			    	 entry.getDirectory("MyJobs/Private/Upload", {create: true, exclusive: false},
 		    			    			    			    	    		function(dir){
-		    			    			    			    			    	 console.log("Created dir "+dir.name); 
-		    			    			    			    			    	 entry.getDirectory("MyJobs/Private/Photos", {create: true, exclusive: false}, 
+		    			    			    			    			    	 console.log("Created dir "+dir.name);
+		    			    			    			    			    	 entry.getDirectory("MyJobs/Private/Photos", {create: true, exclusive: false},
 		    			    			    			    			    				function(dir){
 		    			    			    			    			    			    	 console.log("Created dir "+dir.name);
-		    			    			    			    			    			    	 entry.getDirectory("MyJobs/Global/Download", {create: true, exclusive: false}, 
+		    			    			    			    			    			    	 entry.getDirectory("MyJobs/Global/Download", {create: true, exclusive: false},
 		    			    			    			    			    			    	    		function(dir){
 		    			    			    			    			    			    			    	 console.log("Created dir "+dir.name);
-		    			    			    			    			    			    			    	 entry.getDirectory("MyJobs/Global/Upload", {create: true, exclusive: false}, 
+		    			    			    			    			    			    			    	 entry.getDirectory("MyJobs/Global/Upload", {create: true, exclusive: false},
 		    			    			    			    			    			    			    	    		function(dir){
 		    			    			    			    			    			    			    			    	 console.log("Created dir Global-Upload"+dir.name);
-		    			    			    			    			    			    			    			    	 entry.getDirectory("MyJobs/Global/Forms", {create: true, exclusive: false}, 
+		    			    			    			    			    			    			    			    	 entry.getDirectory("MyJobs/Global/Forms", {create: true, exclusive: false},
 		    			    			    			    			    			    			    			    	    		function(dir){
 		    			    			    			    			    			    			    			    			    	 console.log("Created dir Global-Forms"+dir.name);
-		    			    			    			    			    			    			    			    			    	 entry.getDirectory("MyJobs/Private/Photos/ASC", {create: true, exclusive: false}, 
+		    			    			    			    			    			    			    			    			    	 entry.getDirectory("MyJobs/Private/Photos/ASC", {create: true, exclusive: false},
 		    			    			    			    			    			    			    			    			    	    		function(dir){
 		    			    			    			    			    			    			    			    			    	    		    console.log("Created dir Global-ASC" + dir.name);
-                                                                                                                                                                entry.getDirectory("MyJobs/Global/Icons", {create: true, exclusive: false}, 
+                                                                                                                                                                entry.getDirectory("MyJobs/Global/Icons", {create: true, exclusive: false},
 		    			    			    			    			    			    			    			    			    	    		    function(dir){
 		    			    			    			    			    			    			    			    			    	    		        console.log("Created MyJobs-Global-Icons");
 		    			    			    			    			    			    			    			    			    			        }, function(error){
-		    			    			    			    			    			    			    			    			    			    	     console.log("error Creating Dir MyJobs-Global-Icons"+error); 
+		    			    			    			    			    			    			    			    			    			    	     console.log("error Creating Dir MyJobs-Global-Icons"+error);
 		    			    			    			    			    			    			    			    			    			        });
 		    			    			    			    			    			    			    			    			    			    }, function(error){
-		    			    			    			    			    			    			    			    			    			    	 console.log("error Creating Di MyJobs-Global-ASC"+error); 
+		    			    			    			    			    			    			    			    			    			    	 console.log("error Creating Di MyJobs-Global-ASC"+error);
 		    			    			    			    			    			    			    			    			    			    });
-		    			    			    			    			    			    			    			    			    	 
+
 		    			    			    			    			    			    			    			    			    }, function(error){
-		    			    			    			    			    			    			    			    			    	 console.log("error Creating Di MyJobs-Global-Forms"+error); 
+		    			    			    			    			    			    			    			    			    	 console.log("error Creating Di MyJobs-Global-Forms"+error);
 		    			    			    			    			    			    			    			    			    });
 		    			    			    			    			    			    			    			    }, function(error){
-		    			    			    			    			    			    			    			    	 console.log("error Creating Di MyJobs-Global-Upload"+error); 
+		    			    			    			    			    			    			    			    	 console.log("error Creating Di MyJobs-Global-Upload"+error);
 		    			    			    			    			    			    			    			    });
 		    			    			    			    			    			    			    }, function(error){
-		    			    			    			    			    			    			    	 console.log("error Creating Di MyJobs-Global-Download"+error); 
+		    			    			    			    			    			    			    	 console.log("error Creating Di MyJobs-Global-Download"+error);
 		    			    			    			    			    			    			    });
 
 		    			    			    			    			    			    }, function(error){
-		    			    			    			    			    			    	 console.log("error Creating Di MyJobs-Private-Photos"+error); 
+		    			    			    			    			    			    	 console.log("error Creating Di MyJobs-Private-Photos"+error);
 		    			    			    			    			    			    });
 		    			    			    			    			    }, function(error){
-		    			    			    			    			    	 console.log("error Creating Di MyJobs-Private-Upload"+error); 
+		    			    			    			    			    	 console.log("error Creating Di MyJobs-Private-Upload"+error);
 		    			    			    			    			    });
 
 		    			    			    			    }, function(error){
-		    			    			    			    	 console.log("error Creating Di MyJobs-Private-Download"+error); 
+		    			    			    			    	 console.log("error Creating Di MyJobs-Private-Download"+error);
 		    			    			    			    });
 		    			    			    }, function(error){
-		    			    			    	 console.log("error Creating Di MyJobs-Private "+error); 
+		    			    			    	 console.log("error Creating Di MyJobs-Private "+error);
 		    			    			    });
 		    			    }, function(error){
-		    			    	 console.log("error Creating Di MyJobs-Global "+error); 
-		    			    }); 
+		    			    	 console.log("error Creating Di MyJobs-Global "+error);
+		    			    });
 		    }, function(error){
-		    	 console.log("error Creating Di MyJobs "+error); 
-		    }); 
-
-  
-
-   
-
-    
-
-   
+		    	 console.log("error Creating Di MyJobs "+error);
+		    });
 
 
-    
-    
+
+
+
+
+
+
+
+
+
+
 
 }
 //*************************************************************************************************************************
@@ -2654,10 +2654,10 @@ function buildDirs(fs) {
 //  Delete all Tables
 //
 //*************************************************************************************************************************
-function dropTables() { 
+function dropTables() {
 
-		var sqlstatement=	
-		
+		var sqlstatement=
+
 		'DROP TABLE IF EXISTS MyJobsParams;'+
 		'DROP TABLE IF EXISTS DecommissionStatus;'+
 		'DROP TABLE IF EXISTS AssetSites;'+
@@ -2727,7 +2727,7 @@ function dropTables() {
 						 },
 						 function(error, statement){
 							 opErrorMessage("Error: " + error.message + " when dropTables processing " + statement);
-						 }        
+						 }
 				);
 }
 var sqldeletetable=
@@ -2858,7 +2858,7 @@ var sqlresettable=
 	'DELETE FROM MyJobsPhotos;'+
 	'DELETE FROM MyJobAddWork;'+
 	'DELETE FROM AssetDetailsAll;';
-function emptyTables(type) { 
+function emptyTables(type) {
     var d = new Date();
     // d.setDate(d.getDate() + 1);
     //Assumping emptyTables is called during office hours, lastLogoff should happen out of hours. Once set last logoff should happen every 24 hours.
@@ -2882,19 +2882,19 @@ sqlstatement+= "INSERT INTO MyWorkConfig (paramname , paramvalue ) VALUES ('Last
 html5sql.process(sqlstatement,
 		 function(){
 			stopBGSync();
-			logoutazureandrestart();	
+			logoutazureandrestart();
 		 },
 		 function(error, statement){
-			
+
 			 opErrorMessage("Error: " + error.message + " when delete processing " + statement);
-		 }        
+		 }
 );
-					
+
 }
-function loadDemoData() { 
+function loadDemoData() {
 	 var path = window.location.pathname;
      var page = path.split("/").pop();
-     
+
 	localStorage.setItem("LastSyncedDT",getDate()+getTime())
 	sqlstatement=	'DELETE FROM  MyOrders;'+
 					'DELETE FROM  AssetDetails;'+
@@ -2934,12 +2934,12 @@ function loadDemoData() {
 				'DELETE FROM  MyJobDetsLoch;'+
 				'DELETE FROM  MyJobDetsMPCodes;'+
 				'DELETE FROM  MyJobDetsDraw;'+
-				
+
 
 					html5sql.process(sqlstatement,
 					 function(){
-						
-						
+
+
 						SetConfigParam("TRACE", "ON");
 						SetConfigParam("SYNC_REFERENCE_FREQUENCY", "86400000");
 						SetConfigParam("SYNC_TRANSACTIONAL_FREQUENCY", "600000");
@@ -2949,22 +2949,22 @@ function loadDemoData() {
 						SetConfigParam("LASTSYNC_UPLOAD", "20180316214900");
 						SetConfigParam("SERVERNAME", AzureServerName); //AZURE
 						SetConfigParam("SAPCLIENT", "120");
-						
-						
-			
+
+
+
 						requestDEMOData('MyJobsOrders.json');
-			
+
 						requestDEMOData('MyJobsNotifications.json');
-					
+
 						requestDEMOData('MyJobsUsers.json');
 						requestDEMOData('MyJobsAssetPlantsExt.json');
-						
-						requestDEMOData('MyJobsOrdersObjects.json');	
-						
+
+						requestDEMOData('MyJobsOrdersObjects.json');
+
 						requestDEMOData('MyJobsRefData.json');
-						
+
 						requestDEMOData('MyJobsRefDataCodes.json');
-						
+
 
 						requestDEMOData('MyForms.json');
 						requestDEMOData('PE29.json');
@@ -2975,30 +2975,30 @@ function loadDemoData() {
 
 						getAssets();
 						requestDEMOData('MyJobsParams.json');
-						
 
-					
-					
-						
-					
-						
+
+
+
+
+
+
 
 					 },
 					 function(error, statement){
 						 opErrorMessage("Error: " + error.message + " when LoadDemo processing " + statement);
-						 
-					 }        
+
+					 }
 			);
 }
 
-function resetTables(server,dPassword,dUsername,dValidity) { 
+function resetTables(server,dPassword,dUsername,dValidity) {
 	var sqlstatement=sqlresettable;
 	sqlstatement+="UPDATE MyWorkConfig SET paramvalue = '20120101010101' WHERE paramname = 'LASTSYNC_REFERENCE';"
 	sqlstatement+="UPDATE MyWorkConfig SET paramvalue = '20120101010101' WHERE paramname = 'LASTSYNC_TRANSACTIONAL';"
 	sqlstatement+="UPDATE MyWorkConfig SET paramvalue = '20120101010101' WHERE paramname = 'LASTSYNC_UPLOAD';"
 	sqlstatement+="UPDATE MyWorkConfig SET paramvalue = '"+server+"' WHERE paramname = 'SERVERNAME';"
 	sqlstatement+="UPDATE MyWorkConfig SET paramvalue = '"+dPassword+"' WHERE paramname = 'DEBUGPASSWORD';"
-	sqlstatement+="UPDATE MyWorkConfig SET paramvalue = '"+dUsername+"' WHERE paramname = 'DEBUGUSERNAME';"	
+	sqlstatement+="UPDATE MyWorkConfig SET paramvalue = '"+dUsername+"' WHERE paramname = 'DEBUGUSERNAME';"
 	sqlstatement+="UPDATE MyWorkConfig SET paramvalue = '"+dValidity+"' WHERE paramname = 'DEBUGTOKENVALIDITY';"
 	sqlstatement+="INSERT INTO MyUserDets (mobileuser , vehiclereg, user, password ,employeeid, pincode, maptype, docserver) VALUES ('"+dUsername+"','','" +dUsername+"','','','','Intergraph','DocumentService');";
 					html5sql.process(sqlstatement,
@@ -3008,29 +3008,29 @@ function resetTables(server,dPassword,dUsername,dValidity) {
 						localStorage.setItem('LastSyncUpload','20120101010101');
 						//window.location.href="index.html"
 						homepage.placeAt("body","only");
-						
+
 					    formLogin.open()
 
 					 },
 					 function(error, statement){
-					
+
 						 opErrorMessage("Error: " + error.message + " when resetTables processing " + statement);
-					 }        
+					 }
 			);
 }
 
-function DeleteLog() { 
+function DeleteLog() {
 		html5sql.process("DELETE FROM LogFile",
 						 function(){
 						     currentPagedl = 1;
 						 },
 						 function(error, statement){
 							 opErrorMessage("Error: " + error.message + " when DeleteLog processing " + statement);
-						 }        
+						 }
 				);
 
 }
-	
+
 function tidyLog() {
         html5sql.process("DELETE from logfile WHERE  datetime(recordupdated)  <  datetime('now', '-14 day')",
                      function () {
@@ -3047,7 +3047,7 @@ function requestDEMOData(page){
 
 	opMessage("DEMOLoad "+page);
 
-	$.getJSON("TestData/"+page,function(data,status){ 	
+	$.getJSON("TestData/"+page,function(data,status){
 		if (page == 'AssetSitesDetails.json') {
 			refAssetSitesDetailsCB(data);
 		}
@@ -3098,7 +3098,7 @@ function requestDEMOData(page){
 		if(page=='MyJobsRefJobsDataCodes.json'){
 			refdatacodesCB(data);
 
-		}		
+		}
 		if(page=='MyJobsVehicles.json'){
 			vehicleCB(data);
 
@@ -3107,16 +3107,16 @@ function requestDEMOData(page){
 			vehicleDefaultCB(data);
 
 		}
-		
-		
-		
+
+
+
 		if(page=='funclocs.json'){
 			refflocsCB(data);
 
 		}
-		
-		
-		
+
+
+
 		if(page=='MyJobsDG5Codes.json'){
 
 			dg5CB(data);
@@ -3142,7 +3142,7 @@ function UpdateJobDetClose(orderno, opno){
 
 	},
 	function(error, statement){
-		opErrorMessage("Error: " + error.message + " when insertOperationStatus processing " + statement);          
+		opErrorMessage("Error: " + error.message + " when insertOperationStatus processing " + statement);
 
 	}
 	);
@@ -3178,9 +3178,9 @@ function sendJobPhotos(orderno,opno){
 
 	},
 	function(error, statement){
-		opErrorMessage("Error: " + error.message + " when sendJobPhotos processing " + statement);  
-	
-	}   
+		opErrorMessage("Error: " + error.message + " when sendJobPhotos processing " + statement);
+
+	}
 	);
 
 
@@ -3218,8 +3218,8 @@ function sendJobAttachments(orderno,opno){
 
 	},
 	function(error, statement){
-		opErrorMessage("Error: " + error.message + " when sendJobAttachments processing " + statement); 
-	}   
+		opErrorMessage("Error: " + error.message + " when sendJobAttachments processing " + statement);
+	}
 	);
 
 
@@ -3248,7 +3248,7 @@ function sendJobForms(orderno,opno){
 
 					formHTML=window.btoa(HTMLFormStart+y+HTMLFormEnd)
 
-					createBase64FormXML(formHTML,item.formdesc+".html",item.id,item.formdesc,"close")	
+					createBase64FormXML(formHTML,item.formdesc+".html",item.id,item.formdesc,"close")
 
 				}
 
@@ -3260,8 +3260,8 @@ function sendJobForms(orderno,opno){
 
 	},
 	function(error, statement){
-		opErrorMessage("Error: " + error.message + " when sendJobForms processing " + statement); 
-	}   
+		opErrorMessage("Error: " + error.message + " when sendJobForms processing " + statement);
+	}
 	);
 
 
@@ -3269,7 +3269,7 @@ function sendJobForms(orderno,opno){
 
 }
 function paramCB(data){
-	var sqlstatement="";		
+	var sqlstatement="";
 
 	if(data.params.length>0){
 		if(syncReferenceDetsUpdated){
@@ -3282,14 +3282,14 @@ function paramCB(data){
 		sqlstatement+='DELETE FROM MyJobsParams;';
 		opMessage("Loading"+data.params.length+" Existing Params");
 		for(var cntx=0; cntx < data.params.length ; cntx++)
-		{	
+		{
 
-			sqlstatement+=' INSERT INTO MyJobsParams (name , key1 , key2 , value ) VALUES ('+ 
-			'"'+data.params[cntx].name +'",'+  
-			'"'+data.params[cntx].key1 +'",'+   
-			'"'+data.params[cntx].key2 +'",'+ 
-			'"'+data.params[cntx].value+'");';			
-		}	
+			sqlstatement+=' INSERT INTO MyJobsParams (name , key1 , key2 , value ) VALUES ('+
+			'"'+data.params[cntx].name +'",'+
+			'"'+data.params[cntx].key1 +'",'+
+			'"'+data.params[cntx].key2 +'",'+
+			'"'+data.params[cntx].value+'");';
+		}
 
 		html5sql.process(sqlstatement,
 				function(){
@@ -3297,7 +3297,7 @@ function paramCB(data){
 		},
 		function(error, statement){
 			opErrorMessage("Error: " + error.message + " when processing Param loading " + statement);
-		}        
+		}
 		);
 
 
@@ -3322,7 +3322,7 @@ function paramCB(data){
 
 //	},
 //	function(error, statement){
-//		opErrorMessage("Error: " + error.message + " when syncTransactional processing " + statement); 
+//		opErrorMessage("Error: " + error.message + " when syncTransactional processing " + statement);
 //	}
 //	);
 //}
@@ -3711,7 +3711,7 @@ function requestDEMODataAC(page) {
 			populatePlantGroupAndProcessGroupCodes(data);
 		}
 
-	
+
 	})
 	.fail(function (data, status) {
 		// alert( "error:"+status+":"+data );
@@ -4014,7 +4014,7 @@ function createJobAddWork(orderno , opno , specreqt, startdate, assignment, wkty
 	function(error, statement){
 		console.log("Error: " + error.message + " when CreateAddWork processing " + statement);
 		opErrorMessage("Error: " + error.message + " when CreateAddWork processing " + statement);
-	}        
+	}
 	);
 }
 
