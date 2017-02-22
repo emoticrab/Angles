@@ -9,7 +9,7 @@ var oSwitchFlooding = new sap.m.Switch("Flooding_switch", {
 				customTextOff:"No",
 				width:"100%",
 				change: function(evt){
-					
+
 					setCloseswitch()
 
 			    }
@@ -24,7 +24,7 @@ var oSwitchFlooding = new sap.m.Switch("Flooding_switch", {
 				customTextOff:"No",
 				width:"100%",
 					change: function(evt){
-						
+
 						setCloseswitch()
 
 				    }
@@ -37,14 +37,14 @@ var oSwitchFlooding = new sap.m.Switch("Flooding_switch", {
 				customTextOff:"No",
 				width:"100%",
 					change: function(evt){
-						
+
 						setCloseswitch()
 
 				    }
-			});		
-			
+			});
+
 			//changes for work bundling
-		    
+
 			   var Matrix_Assets_details = new sap.ui.commons.layout.MatrixLayout("DG51F1C3",{
 	                  //id : "matrix1",
 	         //layoutFixed : true,
@@ -75,7 +75,7 @@ var oSwitchFlooding = new sap.m.Switch("Flooding_switch", {
 		  			colSpan:6,
 		  		});
 			   var closeBundledAssets = 	new sap.m.Table("closeBundledAssets",{
-						
+
 						mode: sap.m.ListMode.SingleSelectMaster,
 						selectionChange: function(evt){
 					    },
@@ -89,12 +89,12 @@ var oSwitchFlooding = new sap.m.Switch("Flooding_switch", {
 						         new sap.m.Column({header: new sap.m.Label({text:"Feedback Code"}),
 						        	 hAlign: 'Left',width: '30%',minScreenWidth : "" , demandPopin: true }),
 						        	new sap.m.Column({header: new sap.m.Label({text:"Feedback Description"}),
-						        	 hAlign: 'Left',width: '30%',minScreenWidth : "" , demandPopin: true }) 
+						        	 hAlign: 'Left',width: '30%',minScreenWidth : "" , demandPopin: true })
 				           	     ]
-				           	  
+
 
 					})
-			   
+
 			   Matrix_Assets_details.createRow("",oLabel_assets,radio_button1,radio_button2,"");
 			   oCell.addContent(closeBundledAssets);
 			   Matrix_Assets_details.createRow("",oCell);
@@ -103,30 +103,30 @@ var oLayout1 = new sap.ui.layout.form.GridLayout();
 var oLayout1a = new sap.ui.layout.form.GridLayout();
               var oLayout2 = new sap.ui.layout.form.ResponsiveLayout();
               var oLayout3 = new sap.ui.layout.form.ResponsiveGridLayout();
-              
+
               var Matrix_Close_Job_details = new sap.ui.commons.layout.MatrixLayout("DG51F1C2",{
                   //id : "matrix1",
          //layoutFixed : true,
                width : '850px',
              columns : 9,
-              widths : ['85px', '10px', '80px','10px','130px','10px','80px','10px','250px'] });
-              
-              
-              
+              widths : ['75px', '10px', '70px','10px','160px','10px','130px','10px','200px'] });
+
+
+
          var oLabel_functional_location = new sap.ui.commons.Label({
          text : "Functional Location",TextDirection:"LTR"});
          oCell = new sap.ui.commons.layout.MatrixLayoutCell({
   			colSpan:3,
   		});
          var functional_location=new sap.m.Input("Close_FunctionalLocation",{type: sap.m.InputType.Input, enabled: true});
-         oLabel_functional_location.setLabelFor(functional_location); 
+         oLabel_functional_location.setLabelFor(functional_location);
          oCell.addContent(functional_location);
          var oLabel_problem_grp=new sap.ui.commons.Label("Close_ProblemGroup_label",{
           	text : "Problem Group" ,TextDirection:"LTR"});
          var problem_grp=new sap.m.Select('Close_ProblemGroup',{
         	 width:"250px",
              items: [
-                    
+
              ],
 
              change: function(oControlEvent) {
@@ -136,7 +136,7 @@ var oLayout1a = new sap.ui.layout.form.GridLayout();
              }
       });
          problem_grp.setMaxWidth("250px");
-         oLabel_problem_grp.setLabelFor(problem_grp); 
+         oLabel_problem_grp.setLabelFor(problem_grp);
          Matrix_Close_Job_details.createRow(oLabel_functional_location,"", oCell,"",oLabel_problem_grp,"",problem_grp);
          var oLabel_equipment_id = new sap.ui.commons.Label({
          	text : "Equipment ID" ,TextDirection:"LTR"});
@@ -169,7 +169,7 @@ var oLayout1a = new sap.ui.layout.form.GridLayout();
          var prob_code=new sap.m.Select('Close_ProblemCode',{
         	 width:"250px",
              items: [
-                    
+
              ],
 
              change: function(oControlEvent) {
@@ -188,51 +188,51 @@ var oLayout1a = new sap.ui.layout.form.GridLayout();
         	 width:"160px",
              text: "Select Asset",
              type:     sap.m.ButtonType.Success,
-             tap: [ function(oEvt) {  
+             tap: [ function(oEvt) {
              	SearchMode="CLOSE";
              	  flag="";
-             		formSearchAssetEditUpdate.open() 
+             		formSearchAssetEditUpdate.open()
                          } ]
          });
-         oLabel_select_asset.setLabelFor(select_asset); 
+         oLabel_select_asset.setLabelFor(select_asset);
          oCell2.addContent(select_asset);
         var oLabel_Action_grp = new sap.ui.commons.Label("Close_ActionGroup_label",{
          	text : "Action Group" ,TextDirection:"LTR"});
         var Action_grp=new sap.m.Select('Close_ActionGroup',{
         	 width:"250px",
             items: [
-                   
+
             ],
 
             change: function(oControlEvent) {
-                   
+
            	 BuildCloseActionCodes(oControlEvent.getParameter("selectedItem").getKey(),"NOTSELECTED");
            	 checkMandatedForms()
             }
      });
         Action_grp.setMaxWidth("250px");
-        oLabel_Action_grp.setLabelFor(Action_grp); 
+        oLabel_Action_grp.setLabelFor(Action_grp);
          Matrix_Close_Job_details.createRow(oLabel_select_asset,"", oCell2,"",oLabel_Action_grp,"",Action_grp);
          var oLabel_in_shift_time = new sap.ui.commons.Label({
          	text : "In Shift Time" ,TextDirection:"LTR"});
-         
+
          var in_shift_time=new aws.TimePicker("Close_InShiftTime",{
 				placeholder : "Time Picker",
 					type : "Time",
 					valueFormat : "HH:mm",
 					value : "0:0",
 					displayFormat : "HH:mm",
-					
+
 				});
          oLabel_in_shift_time.setLabelFor(in_shift_time);
          var in_shiftcode=new sap.m.Select('Close_InshiftCode',{
-        	 
+
              items: [
-                    
+
              ],
 
              change: function(oControlEvent) {
-                    
+
             	 //BuildCloseImpactCodes(oControlEvent.getParameter("selectedItem").getKey());
              }
       });
@@ -242,7 +242,7 @@ var oLayout1a = new sap.ui.layout.form.GridLayout();
          var action_code=new sap.m.Select('Close_ActionCode',{
         	 width:"250px",
              items: [
-                    
+
              ],
 
              change: function(oControlEvent) {
@@ -254,24 +254,24 @@ var oLayout1a = new sap.ui.layout.form.GridLayout();
          Matrix_Close_Job_details.createRow(oLabel_in_shift_time,"",in_shift_time,"", in_shiftcode,"",oLabel_action_code,"",action_code);
          var oLabel_out_shift_time = new sap.ui.commons.Label({
           	text : "Out Shift Time",TextDirection:"LTR" });
-          
+
           var out_shift_time=new aws.TimePicker("Close_OutOfShiftTime",{
  				placeholder : "Time Picker",
  					type : "Time",
  					valueFormat : "HH:mm",
  					value : "0:0",
  					displayFormat : "HH:mm",
- 					
+
  				});
           oLabel_out_shift_time.setLabelFor(out_shift_time);
           var out_shiftcode=new sap.m.Select('Close_OutshiftCode',{
         	  //width:"30px",
               items: [
-                     
+
               ],
 
               change: function(oControlEvent) {
-                     
+
              	 //BuildCloseImpactCodes(oControlEvent.getParameter("selectedItem").getKey());
               }
        });
@@ -280,7 +280,7 @@ var oLayout1a = new sap.ui.layout.form.GridLayout();
           var Impact_grp=new sap.m.Select('Close_ImpactGroup',{
         	  width:"250px",
               items: [
-                     
+
               ],
 
               change: function(oControlEvent) {
@@ -303,7 +303,7 @@ var oLayout1a = new sap.ui.layout.form.GridLayout();
          var impact_code=new sap.m.Select('Close_ImpactCode',{
         	 width:"250px",
              items: [
-                    
+
              ],
 
              change: function(oControlEvent) {
@@ -347,25 +347,25 @@ var Matrix_Followon = new sap.ui.commons.layout.MatrixLayout("DG52F1",{
 var oLabel_additional_work = new sap.ui.commons.Label({
 text : "Additional Work Required" ,TextDirection:"LTR"});
 var additional_work_switch=new sap.m.Switch("Close_Work",{
-    
-    
+
+
 	customTextOn:"Yes",
 	customTextOff:"No",
-    change:[function(evt){ 
-    	 	   sap.ui.getCore().getElementById("Close_WD_Group").setEnabled(this.getState())   
-    	 	   sap.ui.getCore().getElementById("Close_WD_Code").setEnabled(this.getState())   
-    	 	   sap.ui.getCore().getElementById("Close_WD_Assignment").setEnabled(this.getState())  
-               sap.ui.getCore().getElementById("Close_WD_StartDate").setEnabled(this.getState())   
-    	 	   sap.ui.getCore().getElementById("Close_WD_Special").setEnabled(this.getState())  
-        	   sap.ui.getCore().getElementById("Close_Variance").setEnabled(this.getState())   
-        	   sap.ui.getCore().getElementById("Close_Reason").setEnabled(this.getState())   
-        	   sap.ui.getCore().getElementById("Close_WD_Operable").setEnabled(this.getState())  
+    change:[function(evt){
+    	 	   sap.ui.getCore().getElementById("Close_WD_Group").setEnabled(this.getState())
+    	 	   sap.ui.getCore().getElementById("Close_WD_Code").setEnabled(this.getState())
+    	 	   sap.ui.getCore().getElementById("Close_WD_Assignment").setEnabled(this.getState())
+               sap.ui.getCore().getElementById("Close_WD_StartDate").setEnabled(this.getState())
+    	 	   sap.ui.getCore().getElementById("Close_WD_Special").setEnabled(this.getState())
+        	   sap.ui.getCore().getElementById("Close_Variance").setEnabled(this.getState())
+        	   sap.ui.getCore().getElementById("Close_Reason").setEnabled(this.getState())
+        	   sap.ui.getCore().getElementById("Close_WD_Operable").setEnabled(this.getState())
         	   //document.getElementById("Close_WD_StartDate-inner").disabled = true;
-           
+
     }]
-    
+
 });
-oLabel_additional_work.setLabelFor(additional_work_switch); 
+oLabel_additional_work.setLabelFor(additional_work_switch);
 Matrix_Followon.createRow(oLabel_additional_work,"", additional_work_switch);
 var oLabel_work_type_group = new sap.ui.commons.Label("FEClose_WD_Group",{
 	text : "Work Type Group" ,TextDirection:"LTR"});
@@ -373,16 +373,16 @@ var work_type_grp = new sap.m.Select('Close_WD_Group',{
 	 width:"200px",
 	 enabled:false,
     items: [
-           
+
     ],
 
     change: function(oControlEvent) {
-           
+
  	   BuildCloseWDCodes(oControlEvent.getParameter("selectedItem").getKey(),"NOTSELECTED");
     }
 });
 work_type_grp.setMaxWidth("200px");
-oLabel_work_type_group.setLabelFor(work_type_grp); 
+oLabel_work_type_group.setLabelFor(work_type_grp);
 Matrix_Followon.createRow(oLabel_work_type_group,"", work_type_grp);
 var oLabel_work_type_code = new sap.ui.commons.Label("FEClose_WD_Code",{
 	text : "Work Type Code" ,TextDirection:"LTR"});
@@ -392,23 +392,23 @@ var work_type_code=new sap.m.Select('Close_WD_Code',{
     items: [],
 
     change: function(oControlEvent) {
-           
+
            //BuildPriorities(oControlEvent.getParameter("selectedItem").getKey());
     }
 });
 work_type_code.setMaxWidth("200px");
-oLabel_work_type_code.setLabelFor(work_type_code); 
+oLabel_work_type_code.setLabelFor(work_type_code);
 Matrix_Followon.createRow(oLabel_work_type_code,"", work_type_code);
 var oLabel_assignment = new sap.ui.commons.Label("FEClose_WD_Assignment",{
 	text : "Assignment" ,TextDirection:"LTR"});
 var assignment=new sap.m.Select('Close_WD_Assignment',{
 	 width:"200px",
 	 enabled:false,
-    items: [ 
+    items: [
     ],
 
     change: function(oControlEvent) {
-           
+
            //BuildPriorities(oControlEvent.getParameter("selectedItem").getKey());
     }
 });
@@ -437,7 +437,7 @@ var variance=new sap.m.Select('Close_Variance',{
      ],
 
     change: function(oControlEvent) {
-           
+
            //BuildPriorities(oControlEvent.getParameter("selectedItem").getKey());
     }
 });
@@ -460,21 +460,21 @@ var operable=new sap.m.Select('Close_WD_Operable',{
     items: [
 
 			new sap.ui.core.Item({
-				key: "NA", 
+				key: "NA",
 				text: "N/A"
 			}),
 			new sap.ui.core.Item({
-				key: "Yes", 
+				key: "Yes",
 				text: "Yes"
 			}),
 			new sap.ui.core.Item({
-				key: "NO", 
+				key: "NO",
 				text: "No"
-			})  
+			})
     ],
 
     change: function(oControlEvent) {
-           
+
            //BuildPriorities(oControlEvent.getParameter("selectedItem").getKey());
     }
 });
@@ -487,17 +487,17 @@ var special_reqd= new sap.m.Switch("Close_WD_Special",{
 	customTextOn:"Yes",
 	customTextOff:"No",
 	visible:false,
-    change:[function(evt){ 
-         
+    change:[function(evt){
+
     }]
-    
+
 });
 oLabel_special.setLabelFor(special_reqd);
 Matrix_Followon.createRow(oLabel_special,"", special_reqd);
 function buildDG5Tabs(){
-	
+
 	buildObjectList_close();//XSource
-	
+
        var tabBar  = new sap.m.IconTabBar('DG5tabBar',
                      {
                            expanded:'{device>/isNoPhone}',
@@ -507,36 +507,36 @@ function buildDG5Tabs(){
                                   //document.getElementById("Close_InShiftTime-inner").disabled = true;
                                   //document.getElementById("Close_OutOfShiftTime-inner").disabled = true;
                                   //document.getElementById("Close_WD_StartDate-inner").disabled = true;
-                                         
+
                                   if (oEvt.getParameters().key == "DG51") {
                                       sap.ui.getCore().getElementById("Close_LongText").setValue(Close_LongTextVal);
                                      //  sap.ui.getCore().getElementById("Close_Equipment").setValue(Close_EquipmentVal);
                                      	// changes added for Job Create & Job  close //XSource
                                     	html5sql.process("select * from myjobdets where orderid =  '"+CurrentOrderNo+"' and ordnoOp =  '"+CurrentOpNo+"'",
 												 function(transaction, results, rowsArray){
-													
-													
+
+
 														if( rowsArray.length>0) {
-														
-															
+
+
 															travelTime = diffInTime(rowsArray[0].tconf_date,rowsArray[0].tconf_time,getFormattedDate(),getFormattedTime())
-															
+
 															sap.ui.getCore().getElementById("Close_InShiftTime").setValue(travelTime)
-															
-															
+
+
 														}
 											},
                        						 function(error, statement){
                        							 window.console&&console.log("Error: " + error.message + " when processing " + statement);
-                       						 }        
+                       						 }
                                     	);
-										
+
                                     }
                                     if(oEvt.getParameters().key=="DG52"){
                                         sap.ui.getCore().getElementById("Close_Reason").setValue(Close_ReasonVal);
                                     }
                                     if(oEvt.getParameters().key=="DG53"){
-                                    
+
 	        				   			    sap.ui.getCore().getElementById('DG5tabBar').setSelectedKey("DG52")
 	        		   				    // sap.ui.getCore().byId("Close_Equipment").setValue(testval);
 	        				   			    formForms.open()
@@ -544,12 +544,12 @@ function buildDG5Tabs(){
                                     }
                                     //changes for work bundling
                                     if(oEvt.getParameters().key=="DG54"){//XSource
-                                    	
+
                                     }//end of changes
-                                  
+
                                   }
                            ],
-                           
+
                            items: [
                                          new sap.m.IconTabFilter( {
                                              key:'DG51',
@@ -565,7 +565,7 @@ function buildDG5Tabs(){
                                                     tooltip: 'Follow On Work',
                                                     text: "Follow On",
                                                     content:[Matrix_Followon
-                                                                           
+
                                                              ]
                                                 }),
                                          new sap.m.IconTabFilter( {
@@ -588,7 +588,7 @@ function buildDG5Tabs(){
 
        }
 function setCloseButtons(key){
-	
+
 }
 function setCloseswitch(){
 	initCloseButtons()
@@ -597,27 +597,27 @@ function setCloseswitch(){
 		//sap.ui.getCore().getElementById('btnDG5').setEnabled(true);
 		//if(sap.ui.getCore().getElementById('btnDG5').getText()=="Not Required"){
 		//	sap.ui.getCore().getElementById('btnDG5').setText("Create");
-			
+
 		//}
-	
+
 	}else{
 		removeMandatedForm("Flooding.html")
 		//sap.ui.getCore().getElementById('btnDG5').setEnabled(false);
 		if (!oSwitchPollution.getEnabled()){
 			oSwitchPollution.setState(false);
 			oSwitchPollution.setEnabled(true);
-		
+
 		}
 	}
-	
+
 	if (oSwitchPollution.getState()){
 		addMandatedForm("Pollution.html")
 		//sap.ui.getCore().getElementById('btnPollution').setEnabled(true);
 		//if(sap.ui.getCore().getElementById('btnPollution').getText()=="Not Required"){
 		//	sap.ui.getCore().getElementById('btnPollution').setText("Create");
-			
+
 		//}
-		
+
 	}else{
 		//sap.ui.getCore().getElementById('btnPollution').setEnabled(false);
 		removeMandatedForm("Pollution.html")
@@ -627,16 +627,16 @@ function setCloseswitch(){
 		//sap.ui.getCore().getElementById('btnDG5').setEnabled(true);
 		//if(sap.ui.getCore().getElementById('btnDG5').getText()=="Not Required"){
 		//	sap.ui.getCore().getElementById('btnDG5').setText("Create");
-			
+
 		//}
-	
+
 	}else{
 		removeMandatedForm("CustomerFeedback.html")
 		//sap.ui.getCore().getElementById('btnDG5').setEnabled(false);
 		if (!oSwitchCustFeed.getEnabled()){
 			oSwitchCustFeed.setState(false);
 			oSwitchCustFeed.setEnabled(true);
-		
+
 		}
 	}
 }
@@ -652,50 +652,50 @@ function initCloseButtons(){
 	//sap.ui.getCore().getElementById('btnPollution').setText("Not Required");
 	//sap.ui.getCore().getElementById('btnPollution').setType(sap.m.ButtonType.Accept);
 	sqlstatement="SELECT * from myformsresponses where orderno = '"+CurrentOrderNo+"' and opno ='"+CurrentOpNo+"'"
-	
+
 	html5sql.process(sqlstatement,
 			function(transaction, results, rowsArray){
-		
+
 				if( rowsArray.length > 0) {
 					for (var n = 0; n < rowsArray.length; n++) {
-						
+
 						if(rowsArray[n].formname=='Flooding'){
-							
-						
+
+
 							//sap.ui.getCore().getElementById('btnDG5').setText("Change");
 							//sap.ui.getCore().getElementById('btnDG5').setType(sap.m.ButtonType.Emphasized);
 						}
 						if(rowsArray[n].formname=='Pollution'){
-							
-							
+
+
 							//sap.ui.getCore().getElementById('btnPollution').setText("Change");
 							//sap.ui.getCore().getElementById('btnPollution').setType(sap.m.ButtonType.Emphasized);
 						}
 						if(rowsArray[n].formname=='Feedback'){
-							
+
 							//sap.ui.getCore().getElementById('btnFeedback').setEnabled(true);
 							//sap.ui.getCore().getElementById('btnFeedback').setText("Change");
 							//sap.ui.getCore().getElementById('btnFeedback').setType(sap.m.ButtonType.Emphasized);
 						}
 
-						
+
 					}
-									
-		
+
+
 				}
 
 			},
 			 function(error, statement){
 				 window.console&&console.log("Error: " + error.message + " when processing " + statement);
-			 }   
-		);	
+			 }
+		);
 
 }
 function setFollowOnMandatory(val){
 
 	sap.ui.getCore().getElementById("Close_Work").setState(val);
-	sap.ui.getCore().getElementById("Close_Variance").setEnabled(val)   
-    sap.ui.getCore().getElementById("Close_Reason").setEnabled(val)   
+	sap.ui.getCore().getElementById("Close_Variance").setEnabled(val)
+    sap.ui.getCore().getElementById("Close_Reason").setEnabled(val)
 }
 function ShowHideFollowOn(){
 	var SQLStatement="";
@@ -705,39 +705,39 @@ function ShowHideFollowOn(){
 		if(rowsArray.length>0){
 			item = rowsArray[0];
 			if(item.value == "YES"){
-				sap.ui.getCore().getElementById("Close_WD_Group").setVisible(true);   
-     	 	   sap.ui.getCore().getElementById("Close_WD_Code").setVisible(true);   
-     	 	   sap.ui.getCore().getElementById("Close_WD_Assignment").setVisible(true);  
-     	 	   sap.ui.getCore().getElementById("Close_WD_StartDate").setVisible(true);   
-     	 	   sap.ui.getCore().getElementById("Close_WD_Special").setVisible(false); 
-     	 	  sap.ui.getCore().getElementById("Close_WD_Operable").setVisible(true); 
-     	 	sap.ui.getCore().getElementById("FEClose_WD_Group").setVisible(true);   
-  	 	   sap.ui.getCore().getElementById("FEClose_WD_Code").setVisible(true);   
-  	 	   sap.ui.getCore().getElementById("FEClose_WD_Assignment").setVisible(true);  
-  	 	   sap.ui.getCore().getElementById("FEClose_WD_StartDate").setVisible(true);   
-  	 	   sap.ui.getCore().getElementById("FE_Close_WD_Special").setVisible(false); 
+				sap.ui.getCore().getElementById("Close_WD_Group").setVisible(true);
+     	 	   sap.ui.getCore().getElementById("Close_WD_Code").setVisible(true);
+     	 	   sap.ui.getCore().getElementById("Close_WD_Assignment").setVisible(true);
+     	 	   sap.ui.getCore().getElementById("Close_WD_StartDate").setVisible(true);
+     	 	   sap.ui.getCore().getElementById("Close_WD_Special").setVisible(false);
+     	 	  sap.ui.getCore().getElementById("Close_WD_Operable").setVisible(true);
+     	 	sap.ui.getCore().getElementById("FEClose_WD_Group").setVisible(true);
+  	 	   sap.ui.getCore().getElementById("FEClose_WD_Code").setVisible(true);
+  	 	   sap.ui.getCore().getElementById("FEClose_WD_Assignment").setVisible(true);
+  	 	   sap.ui.getCore().getElementById("FEClose_WD_StartDate").setVisible(true);
+  	 	   sap.ui.getCore().getElementById("FE_Close_WD_Special").setVisible(false);
   	 	   sap.ui.getCore().getElementById("FEClose_WD_Operable").setVisible(true);
   	 	   //document.getElementById("Close_WD_StartDate-inner").disabled = true;
 			}
 			else{
-				sap.ui.getCore().getElementById("Close_WD_Group").setVisible(false);   
-     	 	   sap.ui.getCore().getElementById("Close_WD_Code").setVisible(false) ;  
-     	 	   sap.ui.getCore().getElementById("Close_WD_Assignment").setVisible(false);  
-     	 	   sap.ui.getCore().getElementById("Close_WD_StartDate").setVisible(false);   
-     	 	   sap.ui.getCore().getElementById("Close_WD_Special").setVisible(false); 
-     	 	  sap.ui.getCore().getElementById("Close_WD_Operable").setVisible(false); 
-     	 	sap.ui.getCore().getElementById("FEClose_WD_Group").setVisible(false);   
-  	 	   sap.ui.getCore().getElementById("FEClose_WD_Code").setVisible(false) ;  
-  	 	   sap.ui.getCore().getElementById("FEClose_WD_Assignment").setVisible(false);  
-  	 	   sap.ui.getCore().getElementById("FEClose_WD_StartDate").setVisible(false);   
-  	 	   sap.ui.getCore().getElementById("FE_Close_WD_Special").setVisible(false); 
-  	 	  sap.ui.getCore().getElementById("FEClose_WD_Operable").setVisible(false); 
+				sap.ui.getCore().getElementById("Close_WD_Group").setVisible(false);
+     	 	   sap.ui.getCore().getElementById("Close_WD_Code").setVisible(false) ;
+     	 	   sap.ui.getCore().getElementById("Close_WD_Assignment").setVisible(false);
+     	 	   sap.ui.getCore().getElementById("Close_WD_StartDate").setVisible(false);
+     	 	   sap.ui.getCore().getElementById("Close_WD_Special").setVisible(false);
+     	 	  sap.ui.getCore().getElementById("Close_WD_Operable").setVisible(false);
+     	 	sap.ui.getCore().getElementById("FEClose_WD_Group").setVisible(false);
+  	 	   sap.ui.getCore().getElementById("FEClose_WD_Code").setVisible(false) ;
+  	 	   sap.ui.getCore().getElementById("FEClose_WD_Assignment").setVisible(false);
+  	 	   sap.ui.getCore().getElementById("FEClose_WD_StartDate").setVisible(false);
+  	 	   sap.ui.getCore().getElementById("FE_Close_WD_Special").setVisible(false);
+  	 	  sap.ui.getCore().getElementById("FEClose_WD_Operable").setVisible(false);
 			}
-		}			
+		}
 			 },
 			 function(error, statement){
-				
-			 }        
+
+			 }
 			);
 	sap.ui.getCore().byId("Close_Variance").setSelectedKey("NOTSELECTED");
 	 sap.ui.getCore().byId("Close_WD_Group").setSelectedKey("NOTSELECTED");
@@ -749,7 +749,7 @@ function ShowHideFollowOn(){
 	 sap.ui.getCore().byId("Close_WD_Special").setState(false);
 	 sap.ui.getCore().byId("Close_Work").setState(false);
 	 sap.ui.getCore().byId("Close_WD_Operable").setSelectedKey("NA");
-	 
+
 }
 
 function markAllAssetsProcessed() {
