@@ -351,7 +351,7 @@ function updateMyObjectListAll(val) {
         var sqlstatement = "UPDATE MyObjectListData  SET sapcode =null,feedbackdesc=null, checked = 'true' WHERE sapcode is null AND orderid = '" + CurrentOrderNo.replace(/^[0]+/g, "") + "' ;"
     }
     else {
-        var sqlstatement = "UPDATE MyObjectListData  SET sapcode =null ,feedbackdesc=null,checked = null WHERE sapcode is not null AND orderid = '" + CurrentOrderNo.replace(/^[0]+/g, "") + "' ;"
+        var sqlstatement = "UPDATE MyObjectListData  SET sapcode =null ,feedbackdesc=null,checked = null WHERE  checked is not null OR sapcode is not null AND orderid = '" + CurrentOrderNo.replace(/^[0]+/g, "") + "' ;"
     }
 
     html5sql.process(sqlstatement, function (transaction, results, rowsArray) {

@@ -1,7 +1,7 @@
 //Azure Callback Handlers
 //Added 10-09-2016
-var localJobDets = ""
-var localJobDetsOrders = ""
+var localJobDets = "";
+var localJobDetsOrders = "";
 function refreshToken(callback) {
   //  opMessage("refreshToken " + new Date());
   mobileService._request('GET', '/.auth/refresh', function(error, response) {
@@ -2288,54 +2288,54 @@ function syncUploadAzure(id, synctype) {
                   }
                 }
                 item = rowsArray[0];
-                opMessage("New ZPM3");
-
-                //header["UserId"] = localStorage.getItem('MobileUser');
-                //header["ShortText"] = item['shorttext'];
-
-                // myjson["Reportedby"] = localStorage.getItem('EmployeeID');
-                // myjson["NotifType"] = item['type'];
-                // myjson["ActStartDate"] = item['startdate'];
-                // myjson["ActStartTime"] = item['starttime'];
-                // myjson["ActEndDate"] = item['enddate'];
-                // myjson["ActEndTime"] = item['endtime'];
-                // myjson["User"] = localStorage.getItem('MobileUser');
 
 
-                var myjson = {};
-                myjson["Message"] = "";
-                myjson["MessageType"] = "";
-                myjson["ReportedBy"] = localStorage.getItem('EmployeeID');
+                // Introduce a Check against this item for ZPM3
+                html5sql.process("SELECT ordType from MyJobDets where orderid = '" + item['orderno'] + "'",
+                  function(transaction, results1, rowsArray1) {
+                    if(rowsArray1[0].ordType === "ZPM3"){
+                      opMessage("New ZPM3");
+                      var myjson = {};
+                      myjson["Message"] = "";
+                      myjson["MessageType"] = "";
+                      myjson["ReportedBy"] = localStorage.getItem('EmployeeID');
+                      myjson["EqStatus"] = item['equipmentstatus'];
+                      myjson["NotifTyp"] = "Z9";
+                      myjson["OrderId"] = item['orderno'];
+                      myjson["Equipment"] = item['equipment'];
+                      myjson["ShortText"] = "";
+                      myjson["StartDate"] = "";
+                      myjson["StartTime"] = "";
+                      myjson["EndDate"] = "";
+                      myjson["EndTime"] = "";
+                      myjson["longText"] = item['longtext'];
 
-
-                // Check numbers here should need -1 then back to string
-                console.log("EQUIPMENT STATUS", item['equipmentstatus'])
-                myjson["EqStatus"] = item['equipmentstatus'];
-                myjson["NotifTyp"] = "Z9";
-                myjson["OrderId"] = item['orderno'];
-                myjson["Equipment"] = item['equipment'];
-                myjson["ShortText"] = "";
-                myjson["StartDate"] = "";
-                myjson["StartTime"] = "";
-                myjson["EndDate"] = "";
-                myjson["EndTime"] = "";
-                myjson["longText"] = item['longtext'];
-
-                sapCalls += 1;
-                n = rowsArray.length
-                html5sql.process("UPDATE MyNotifications SET state = 'SENDING' WHERE id='" + item['id'] + "'",
-                  function() {
-                    postAzureData("ZGW_MAM30_011_CREATE_NEW_JOB", myjson, "UPDATE MyNotifications SET state = 'NEW' WHERE id='" + item['id'] + "'", item['id']);
-                  },
-                  function(error, statement) {
+                      sapCalls += 1;
+                      n = rowsArray.length
+                      html5sql.process("UPDATE MyNotifications SET state = 'SENDING' WHERE id='" + item['id'] + "'",
+                        function() {
+                          postAzureData("ZGW_MAM30_011_CREATE_NEW_JOB", myjson, "UPDATE MyNotifications SET state = 'NEW' WHERE id='" + item['id'] + "'", item['id']);
+                        },
+                        function(error, statement) {
+                          opErrorMessage("Error: " + error.message + " when processing " + statement);
+                        }
+                      );
+                    } else {
+                      html5sql.process("UPDATE MyNotifications SET state = 'SENDING' WHERE id='" + item['id'] + "'",
+                        function() {
+                          console.log("Processed none ZPM3 Job");
+                        },
+                        function(error, statement) {
+                          opErrorMessage("Error: " + error.message + " when processing " + statement);
+                        }
+                      );
+                    }
+                    },function(error, statement) {
                     opErrorMessage("Error: " + error.message + " when processing " + statement);
-                  }
-                );
-              }
-
-            },
+                  });
+            }
+          },
             function(error, statement) {
-
               opErrorMessage("Error: " + error.message + " when processing " + statement);
             });
         }
@@ -2457,12 +2457,12 @@ function syncUploadAzure(id, synctype) {
                   counter = "0" + counter;
                 }
 
-                toObjectList.push([{
+                toObjectList.push({
                   "OrderId": item['orderid'],
                   "Counter": counter,
                   "SortField": item['sapcode'],
                   "ProcessingInd": item['checked']
-                }])
+                })
                 myjson["toObjList"] = toObjectList;
 
                 //postAzureData("ZGW_MAM30_OBJLIST", myjson)
