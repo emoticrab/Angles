@@ -109,7 +109,7 @@ var oLayout1a = new sap.ui.layout.form.GridLayout();
          //layoutFixed : true,
                width : '850px',
              columns : 9,
-              widths : ['75px', '10px', '70px','10px','160px','10px','70px','10px','250px'] });
+              widths : ['75px', '10px', '70px','10px','160px','10px','130px','10px','200px'] });
 
 
 

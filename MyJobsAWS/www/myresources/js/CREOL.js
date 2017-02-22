@@ -13,10 +13,11 @@ var Equipment_status = new sap.m.Select('Equipment_status', {
         }, {
             key: "E0013",
             text: "Equipment Online"
-        }, {
-            key: "E0015",
-            text: "Unserviceable"
         }
+        // {
+        //     key: "E0015",
+        //     text: "Unserviceable"
+        // }
     ],
 
     change: function (oControlEvent) {
@@ -27,7 +28,7 @@ var Equipment_status = new sap.m.Select('Equipment_status', {
 var CloseStatus_label = new sap.m.Label("CloseEuipmentlabel", { text: "Equipment Status", visible: false });
 var CloseEquipment_status = new sap.m.Select('CloseEquipment_status', {
     visible: false,
-    width: "250px",
+    width: "200px",
     items: [
         {
             key: "NOTSELECTED",
@@ -38,10 +39,11 @@ var CloseEquipment_status = new sap.m.Select('CloseEquipment_status', {
         }, {
             key: "E0013",
             text: "Equipment Online"
-        }, {
-            key: "E0015",
-            text: "Unserviceable"
         }
+        // {
+        //     key: "E0015",
+        //     text: "Unserviceable"
+        // }
     ],
 
     change: function (oControlEvent) {
@@ -77,7 +79,7 @@ function buildObjectList() {
     }
 
     var sqlstatementObjectListdataId = "delete from MyObjectListData where sapcode is null and feedbackdesc is null and checked is null;";
-    /// new array 
+    /// new array
     html5sql.process("SELECT MyObjectList.* ,checked,feedbackdesc,sapcode,o.id as objectListdataId FROM MyObjectList left outer join MyObjectListdata o on MyObjectList.orderid=o.orderid and  trim(MyObjectList.counter)=trim(o.counter)  where MyObjectList.orderid = '" + CurrentOrderNo.replace(/^[0]+/g, "") + "' ;",
 			 function (transaction, results, rowsArray) {
 			     var n = 0;
@@ -86,7 +88,7 @@ function buildObjectList() {
 			     opTable.destroyItems();
 			     if (results.rows.length > 0) {
 			         while (n < rowsArray.length) {
-			            
+
 
 			             if (rowsArray[n].equipment) {
 			                 objectId = rowsArray[n].equipment;
@@ -139,7 +141,7 @@ function buildObjectList() {
 			             html5sql.process(sqlstatementObjectListdataId, function (transaction, results, rowsArray) {
 			             },
                             function (error, statement) {
-                                //outputLogToDB(); 
+                                //outputLogToDB();
                             }
                            );
 			         }
@@ -152,7 +154,7 @@ function buildObjectList() {
 			     }
 			 },
 	 function (error, statement) {
-	     //outputLogToDB(); 
+	     //outputLogToDB();
 	 }
 	);
 
@@ -180,7 +182,7 @@ function buildObjectList_close() {
 
     var sqlstatementObjectListdataId = "";
 
-    /// new array 
+    /// new array
     html5sql.process("SELECT MyObjectList.* ,checked,feedbackdesc,sapcode,o.id as objectListdataId  FROM MyObjectList left outer join MyObjectListdata o on MyObjectList.orderid=o.orderid and  trim(MyObjectList.counter)=trim(o.counter)  where MyObjectList.orderid = '" + CurrentOrderNo.replace(/^[0]+/g, "") + "' ;",
 			 function (transaction, results, rowsArray) {
 			     var n = 0;
@@ -248,7 +250,7 @@ function buildObjectList_close() {
 			             html5sql.process(sqlstatementObjectListdataId, function (transaction, results, rowsArray) {
 			             },
                             function (error, statement) {
-                                //outputLogToDB(); 
+                                //outputLogToDB();
                             }
                            );
 			         }
@@ -261,7 +263,7 @@ function buildObjectList_close() {
 
 			 },
 	 function (error, statement) {
-	     //outputLogToDB(); 
+	     //outputLogToDB();
 	 }
 	);
 
@@ -321,7 +323,7 @@ function updateMyObjectList(counter, type, val1, val2) {
     html5sql.process(sqlstatement, function (transaction, results, rowsArray) {
     },
     function (error, statement) {
-        //outputLogToDB(); 
+        //outputLogToDB();
     }
    );
 }
@@ -337,7 +339,7 @@ function updateMyObjectListAll(val) {
         buildObjectList_close();
     },
     function (error, statement) {
-        //outputLogToDB(); 
+        //outputLogToDB();
     }
    );
 }
@@ -348,7 +350,7 @@ function BundledAssetOKToClose(callback) {
             callback(rowsArray.length);
     },
         function (error, statement) {
-            //outputLogToDB(); 
+            //outputLogToDB();
         }
        );
 }

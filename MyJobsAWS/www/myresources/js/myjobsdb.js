@@ -146,7 +146,6 @@ empid=localStorage.getItem("EmployeeID")
 
 						 roomsArray.push(loc[0]+"|"+room[0]+"|"+depth[0]+"|"+comments[0])
 
-
 						}
 						roomsArray.sort();
 						var pdepth="";
@@ -1285,10 +1284,11 @@ if (Postingazuredataflag) {
 
 
 		if (rowsArray.length>0) {
-		    opMessage("SYNC:UPLOAD Calling syncUploadAzure");
+		  opMessage("SYNC:UPLOAD Calling syncUploadAzure");
 
 			setSyncingIndicator(true);
 		item = rowsArray[0];
+		console.log(item);
 		syncUploadAzure(item.id,item.type)
 		//syncUploadNew(item.id,item.type)
 		}else{
@@ -1664,8 +1664,6 @@ html5sql.process("INSERT INTO  MyJobClose (orderno , opno, notifno, details, emp
 	         html5sql.process("INSERT INTO MyNotifications (state , type, orderno, reportedby, longtext,equipment,equipmentstatus) VALUES (" +
 					         "'NEW','Z9','" + order + "','" + empid + "','" + details + "','" + equipment + "','" + equipmentstatus + "');",
 	         function (transaction, results, rowsArray) {
-
-
 	         },
 	         function (error, statement) {
 	             opErrorMessage("Error: " + error.message + " when ZPM3 processing " + statement);
