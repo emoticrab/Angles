@@ -104,6 +104,9 @@ function buildObjectList() {
 			                 sqlstatementObjectListdataId += "INSERT INTO MyObjectListData (counter ,orderid) VALUES ('" + rowsArray[n].counter + "','" + CurrentOrderNo.replace(/^[0]+/g, "") + "');"
                          }
 
+
+                  // This adds the items to the table. use this to build and interact with the local model
+                  console.log(rowsArray[n])
 			             opTable.addItem(new sap.m.ColumnListItem("Obj:" + rowsArray[n].id, {
 
 			                 cells:
@@ -112,7 +115,7 @@ function buildObjectList() {
                                 new sap.m.Text({ text: objectId.replace(/^[0]+/g, "") }),
                                new sap.m.Text({ text: objectDesc }),
                                  new sap.m.CheckBox("check" + n, {
-                                     selected: rowsArray[n].checked == 'true',
+                                     selected: rowsArray[n].checked,
                                      select: function (evt) {
                                          var checkid = evt.getSource().sId.replace(/[^0-9]/g, '');
                                          populateFeedbackCodeDopdown(this.getSelected(), checkid)
@@ -207,7 +210,8 @@ function buildObjectList_close() {
 			                 sqlstatementObjectListdataId = "delete from MyObjectListData where counter='" + rowsArray[n].counter  + "' and orderid = '" + CurrentOrderNo.replace(/^[0]+/g, "") + "';";
 			                 sqlstatementObjectListdataId += "INSERT INTO MyObjectListData (counter ,orderid) VALUES ('" + rowsArray[n].counter + "','" + CurrentOrderNo.replace(/^[0]+/g, "") + "');"
 			             }
-
+                  console.log('THIS IS THE CLOSE SCREEN STUFF')
+                  console.log(rowsArray[n])
 			             opTable.addItem(new sap.m.ColumnListItem("Obj_:" + rowsArray[n].id, {
 
 			                 cells:
@@ -215,7 +219,7 @@ function buildObjectList_close() {
                                 new sap.m.Text({ text: objectId.replace(/^[0]+/g, "") }),
                                new sap.m.Text({ text: objectDesc }),
                                  new sap.m.CheckBox("checkClose" + n, {
-                                     selected: rowsArray[n].checked == 'true',
+                                     selected: rowsArray[n].checked,
                                      select: function (evt) {
                                          var checkid = evt.getSource().sId.replace(/[^0-9]/g, '');
                                          populateFeedbackCodeDopdown(this.getSelected(), "Close" + checkid)
