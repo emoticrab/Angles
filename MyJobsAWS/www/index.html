@@ -1406,7 +1406,7 @@ function setNotificationCounts()
 
 
 			//html5sql.process("SELECT * FROM MyNotifications where type <> 'Z7';",
-			html5sql.process("SELECT notifno FROM MyNotifications where notifno in (SELECT notifno FROM MyJobDets where status not in ('CONF','CLOSED', 'REJ1', 'REJ2'));",
+			html5sql.process("SELECT notifno FROM MyNotifications where notifno in (SELECT notificationNo FROM MyJobDets where status not in ('CONF','CLOSED', 'REJ1', 'REJ2'));",
 			 function(transaction, results, rowsArray){
 
 				sap.ui.getCore().byId("NotifsCnt").setNumber(rowsArray.length);

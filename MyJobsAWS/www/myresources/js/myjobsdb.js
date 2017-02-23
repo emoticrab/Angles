@@ -429,7 +429,7 @@ function opLog(msg, type) {
         nowt = getTime();
         dtstamp = nowd + nowt;
     var sqlstatement = 'INSERT INTO LogFile (datestamp , type, message ) VALUES ("' + dtstamp + '","' + type + '","' + msg + '");';
-    console.log("LogFile SQL Statement:" + sqlstatement);
+  //  console.log("LogFile SQL Statement:" + sqlstatement);
 		html5sql.process(sqlstatement,
 						 function(){
 							 //alert("Success Creating Tables");
@@ -1237,7 +1237,7 @@ function syncTransactional() {
 
 
 function syncUpload() {
-	var UploadSQLStatement=""
+	var UploadSQLStatement;
 if(!checkConnection()){
 		return;
 	}
@@ -1247,7 +1247,7 @@ if (Postingazuredataflag) {
 		return;
 }
 
-	UploadSQLStatement="select 'VehicleCheck' as type, '' as extra,id as id, recordupdated from MyVehicleCheck where state = 'NEW' "
+	  UploadSQLStatement="select 'VehicleCheck' as type, '' as extra,id as id, recordupdated from MyVehicleCheck where state = 'NEW' "
 		UploadSQLStatement+=" union "
 		UploadSQLStatement+=" select 'NotificationsZ7' as type,   shorttext as extra,id    as id, recordupdated from MyNotifications where notifno = 'NEW' and type = 'Z7' "
 		UploadSQLStatement+=" union "
@@ -1255,7 +1255,8 @@ if (Postingazuredataflag) {
 		UploadSQLStatement+=" union "
 		UploadSQLStatement+=" select 'NotificationsZ9' as type,  '' as extra,id    as id, recordupdated from MyNotifications where state = 'NEW' and type = 'Z9' "
 		UploadSQLStatement+=" union "
-		UploadSQLStatement+=" select 'ObjectList' as type,  '' as extra,id    as id, recordupdated from MyObjectListData where state = 'NEW' "
+    // Object list is now called seperately to ensure we only send once to the back end, with an array of objects.
+		UploadSQLStatement+=" select 'ObjectList' as type,  '' as extra,id    as id, recordupdated from MyObjectListData where state = 'NEW'"
 		UploadSQLStatement+=" union "
     /*changes for CREOL*/UploadSQLStatement += " select 'EquipmentStatus' as type,   '' as extra,id, recordupdated from MyEquipmentUpdates where state = 'NEW' "
         UploadSQLStatement+=" union "
@@ -1279,27 +1280,41 @@ if (Postingazuredataflag) {
 		UploadSQLStatement+=" select 'CustomerFeedback' as type,  '' as extra, id    as id, recordupdated from MyFormsResponses where lastupdated='CLOSED' and formname = 'CustomerFeedback' "
 		UploadSQLStatement+=" order by recordupdated asc "
 
+
+
+
 		html5sql.process(UploadSQLStatement,
 		function(transaction, results, rowsArray){
 
 
 		if (rowsArray.length>0) {
-		  opMessage("SYNC:UPLOAD Calling syncUploadAzure");
+		  	opMessage("SYNC:UPLOAD Calling syncUploadAzure");
+			  setSyncingIndicator(true);
+		    item = rowsArray[0];
+				if(item.type === 'ObjectList'){
+			 		sap.ui.getCore().setModel(new sap.ui.model.json.JSONModel({id:item.id,type:item.type}),'seanListedModel');
+					syncUploadAzure(item.id,item.type,false)
+				}else{
+			 		syncUploadAzure(item.id,item.type,true)
+				}
 
-			setSyncingIndicator(true);
-		item = rowsArray[0];
-		console.log(item);
-		syncUploadAzure(item.id,item.type)
-		//syncUploadNew(item.id,item.type)
-		}else{
-		   // opMessage("SYNC:UPLOAD no rows returned - NOT calling syncUploadAzure");
+ if(rowsArray.length === 1){
+			console.log("FETCHING THE LAST ORDERLIST ITEM");
+			var data = sap.ui.getCore().getModel('seanListedModel').getData();
+			if(data.type !== null){
+				syncUploadAzure(data.id,data.type,true)
+			}
 		}
-		},
-		function(error, statement){
-			opErrorMessage("Error: " + error.message + " when processing " + statement);
-		}
-		);
 
+	 //syncUploadNew(item.id,item.type)
+	 }else{
+			// opMessage("SYNC:UPLOAD no rows returned - NOT calling syncUploadAzure");
+	 }
+	 },
+	 function(error, statement){
+		 opErrorMessage("Error: " + error.message + " when processing " + statement);
+	 }
+	 );
 }
 function syncDocuments(){
 	var DocSQLStatement

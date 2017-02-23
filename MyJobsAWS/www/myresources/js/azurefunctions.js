@@ -1,11 +1,18 @@
 //Azure Callback Handlers
 //Added 10-09-2016
-var localJobDets = ""
-var localJobDetsOrders = ""
+var localJobDets = "";
+var localJobDetsOrders = "";
+
+// These Globals are used to prevent multiple posting of the same status and ObjectList
+seanSentArray = [];
+postedId ="";
+postedStatus ="";
+//End Of Changes
+
 function refreshToken(callback) {
   //  opMessage("refreshToken " + new Date());
   mobileService._request('GET', '/.auth/refresh', function(error, response) {
-    if (error != null) {
+    if (error !== null) {
       // opMessage("refreshToken Failed " + error + " " + new Date());
       callback(error);
 
@@ -34,21 +41,21 @@ function refreshOrLogin(callback) {
       opMessage("SYNC:refreshOrLogin token could not be refreshed - call loginAzure");
       loginAzure(function(result) {
         opMessage("SYNC:refreshOrLogin loginAzure callback " + result);
-        callback("SUCCESS")
-      })
+        callback("SUCCESS");
+      });
     }
-  })
+  });
 }
 function loginAzure(callback) {
   mobileService.login('aad').done(function(results) {
     var userId = results.userId;
     opMessage("SYNC:loginAzure SUCCESS - userId = " + userId);
-    localStorage.setItem("token", mobileService.currentUser.mobileServiceAuthenticationToken)
-    localStorage.setItem("user", mobileService.currentUser.userId)
-    callback(userId)
+    localStorage.setItem("token", mobileService.currentUser.mobileServiceAuthenticationToken);
+    localStorage.setItem("user", mobileService.currentUser.userId);
+    callback(userId);
   }, function(error) {
     opErrorMessage("loginAzure FAIL - error = " + error);
-    callback(error)
+    callback(error);
   });
 }
 
@@ -64,8 +71,8 @@ function logoutazure(callback) {
 
   opMessage("SYNC:logoutazure calling mobileService.logout");
   mobileService.logout(function() {
-    localStorage.setItem("token", null)
-    localStorage.setItem("user", null)
+    localStorage.setItem("token", null);
+    localStorage.setItem("user", null);
 
     var d = new Date();
     d.setDate(d.getDate() + 1);
@@ -86,10 +93,10 @@ function logoutazureandrestart() {
 
 
   mobileService.logout(function() {
-    localStorage.setItem("token", null)
-    localStorage.setItem("user", null)
+    localStorage.setItem("token", null);
+    localStorage.setItem("user", null);
     homepage.placeAt("body", "only");
-    formLogin.open()
+    formLogin.open();
   //window.location.href="index.html"
   }, function() {
     opErrorMessage("error Logging out of Azure after DB Reset");
@@ -99,17 +106,17 @@ function requestAzureUsername(callback) {
 
   //   opMessage("requestAzureUsername  " + new Date());
 
-  if (localStorage.getItem("user") != null && localStorage.getItem("token") != null) {
+  if (localStorage.getItem("user") !== null && localStorage.getItem("token") !== null) {
     var theuser = localStorage.getItem("user");
     var theToken = localStorage.getItem("token");
     var userCred = {
       "userId": theuser,
       "mobileServiceAuthenticationToken": theToken
-    }
+    };
     mobileService.currentUser = userCred;
   }
   var d = new Date();
-  if (Date.parse(localStorage.getItem('LASTTOKENREFRESH')) < d || mobileService.currentUser == null) {
+  if (Date.parse(localStorage.getItem('LASTTOKENREFRESH')) < d || mobileService.currentUser === null) {
     //   opMessage("requestAzureUsername  LASTTOKENREFRESH= " + localStorage.getItem('LASTTOKENREFRESH') + " " + new Date());
 
     refreshOrLogin(function(result) {
@@ -120,7 +127,7 @@ function requestAzureUsername(callback) {
       }
       //  opMessage("requestAzureUsername Calling getAzureUsername1 " + new Date());
       getAzureUsername(callback);
-    })
+    });
   } else {
     // opMessage("requestAzureUsername Calling getAzureUsername2 " + new Date());
     getAzureUsername(function(result) {
@@ -128,12 +135,12 @@ function requestAzureUsername(callback) {
         refreshOrLogin(function(result) {
           if (result == "SUCCESS") {
             //  opMessage("requestAzureUsername refreshOrLogin SUCCESS " + new Date());
-            d.setMinutes(d.getMinutes() + 50)
+            d.setMinutes(d.getMinutes() + 50);
             SetConfigParam('LASTTOKENREFRESH', d);
           }
           // opMessage("requestAzureUsername Calling getAzureUsername1 " + new Date());
           getAzureUsername(callback);
-        })
+        });
 
       } else {
         callback(result);
@@ -154,7 +161,7 @@ function getAzureUsername(callback) {
   }).done(function(results) {
     if (typeof results.result === "undefined") {
       busycreateDB.close();
-      sap.ui.getCore().byId("busycreateDB").setText("Error logging in to Azure")
+      sap.ui.getCore().byId("busycreateDB").setText("Error logging in to Azure");
       callback("FAIL");
     } else {
       opMessage("SYNC:DOWNLOAD GETTING DATA in getAzureUsername GET DATA SUCCESS AZURE:" + results.result[0].user_id);
@@ -162,36 +169,36 @@ function getAzureUsername(callback) {
     }
   }, function(error) {
     opMessage("SYNC:getAzureUsername FAIL " + error);
-    callback("FAIL")
+    callback("FAIL");
   });
 }
 
 function checkAzureLogin() {
   var username = "";
-  if (checkConnection() == false && localStorage.getItem('MobileUser').length == 0) {
+  if (checkConnection() === false && localStorage.getItem('MobileUser').length === 0) {
     sap.ui.getCore().byId("Login_Message").setValue("No network. A network connection is required to login for the first time");
     busyDoingLogon.close();
     return;
   }
 
 
-  if (checkConnection() == true) {
+  if (checkConnection() === true) {
     //Check
     mobileService = new WindowsAzure.MobileServiceClient(localStorage.getItem('ServerName'));
-    var d = new Date()
+    var d = new Date();
     opMessage("SYNC:checkAzureLogin LastLogoff=" + localStorage.getItem('LastLogoff'));
     if (Date.parse(localStorage.getItem('LastLogoff')) < d) {
       opMessage("SYNC:Logging Out");
       logoutazure(function() {
         opMessage("SYNC:checkAzureLogin logoutazure complete");
-        completeAzureLogin()
+        completeAzureLogin();
       });
     } else {
       completeAzureLogin();
     }
   } else {
     // window.location.href = "Home.html"
-    formLogin.close()
+    formLogin.close();
     busyDoingLogon.close();
   }
 
@@ -205,31 +212,59 @@ function completeAzureLogin() {
       busyDoingLogon.close();
     } else {
 
-      username = result.split("@")[0].toUpperCase()
+      username = result.split("@")[0].toUpperCase();
       if (localStorage.getItem('MobileUser').length > 0) {
 
         if ((localStorage.getItem('MobileUser') == username) || (localStorage.getItem('DebugPassword') == getAdminPW())) {
-          requestAzureData("ZGW_MAM30_USER_VALIDATE_SRV", "UserId='" + localStorage.getItem('MobileUser') + "',Password=''")
+          requestAzureData("ZGW_MAM30_USER_VALIDATE_SRV", "UserId='" + localStorage.getItem('MobileUser') + "',Password=''");
         } else {
           sap.ui.getCore().byId("Login_Message").setValue("AZURE. Azure User does not match this device setup");
           busyDoingLogon.close();
         }
       } else {
-        CreateAZUREUser(username, "Google", "DocumentService?")
+        CreateAZUREUser(username, "Google", "DocumentService?");
 
       }
 
     }
 
-  })
+  });
 
 }
+
+function _createObjectList(rowsArrayInput,aObjectList,builtList){
+  console.log('BUILDING LIST');
+  for (i = 0; i < rowsArrayInput.length; i++) {
+    rowsArrayInput[i].counter = (rowsArrayInput[i].counter).trim();
+    if (rowsArrayInput[i].checked == "true") {
+      rowsArrayInput[i].checked = 'X';
+    } else {
+      rowsArrayInput[i].checked = '';
+    }
+    var loopItem = rowsArrayInput[i];
+    var counter = loopItem['counter'].trim();
+    if (parseInt(counter, 10) < 10) {
+      counter = "0" + counter;
+    }
+
+    aObjectList.push({
+      "OrderId": loopItem.orderid,
+      "Counter": counter,
+      "SortField": loopItem.sapcode,
+      "ProcessingInd": loopItem.checked
+    });
+    sapCalls += 1;
+    n = rowsArrayInput.length;
+  }
+  builtList.resolve(aObjectList);
+}
+
 function postAzureData(page, postData, timedOutSQL, recno) {
 
   Postingazuredataflag = true;
   var myurl = localStorage.getItem('ServerName') + "/api/" + page + "?" + localStorage.getItem('MobileUser');
   opMessage("SYNC:UPLOAD SENDING DATA Calling postAzureData:" + myurl);
-  setSyncingIndicator(true)
+  setSyncingIndicator(true);
   $.ajax({
     type: "POST",
     contentType: "application/json; charset=UTF-8",
@@ -249,7 +284,7 @@ function postAzureData(page, postData, timedOutSQL, recno) {
   }).fail(function(data, xhr, status) {
     opErrorMessage("Azure call failed" + page + xhr + status);
     Postingazuredataflag = false;
-    setSyncingIndicator(false)
+    setSyncingIndicator(false);
 
     TimedOut = true;
     resetSENDINGData(timedOutSQL);
@@ -257,13 +292,13 @@ function postAzureData(page, postData, timedOutSQL, recno) {
 
   }).always(function() {
     Postingazuredataflag = false;
-    setSyncingIndicator(false)
+    setSyncingIndicator(false);
   });
 }
 function postAzureDoc(page, postData, parameters, timedOutSQL, recno) {
   var myurl = localStorage.getItem('ServerName') + "/api/" + page + "?" + parameters;
   opMessage("SYNC:UPLOAD SENDING DATA in postAzureDoc:" + myurl);
-  setSyncingIndicator(true)
+  setSyncingIndicator(true);
   $.ajax({
     type: "POST",
     contentType: "application/json; charset=UTF-8",
@@ -277,13 +312,13 @@ function postAzureDoc(page, postData, parameters, timedOutSQL, recno) {
     opMessage("SYNC:UPLOAD SENDING DATA in postAzureDoc POST DATA SUCCESS DOCSERVER:" + myurl);
     setSyncingIndicator(false);
     setCounts();
-    console.log("Success")
+    console.log("Success");
   //SetLastSyncDetails("LASTSYNC_UPLOAD");
   //postAzureCB(data.d, page, recno);
   }).fail(function(data, xhr, status) {
     opErrorMessage(page + status + data);
-    setSyncingIndicator(false)
-    console.log("Failed")
+    setSyncingIndicator(false);
+    console.log("Failed");
 
     TimedOut = true;
     resetSENDINGData(timedOutSQL);
@@ -291,14 +326,14 @@ function postAzureDoc(page, postData, parameters, timedOutSQL, recno) {
 
 
   }).always(function() {
-    setSyncingIndicator(false)
+    setSyncingIndicator(false);
   });
 }
 function requestAzureData(page, params) {
 
   opMessage("SYNC:requestAzureData " + page + " " + params);
 
-  if (localStorage.getItem("user") != null && localStorage.getItem("token") != null) {
+  if (localStorage.getItem("user") !== null && localStorage.getItem("token") !== null) {
     var theuser = localStorage.getItem("user");
     var theToken = localStorage.getItem("token");
     var userCred = {
@@ -1932,7 +1967,7 @@ function removeOldJobDets(orderList, orderopList) {
 
 }
 
-function syncUploadAzure(id, synctype) {
+function syncUploadAzure(id, synctype, bUpload) {
   opMessage("SYNC:UPLOAD in syncUploadAzure");
   // ToDo FileRequest,FileDownload,EOD,JobClose
   //Notif Create needs ......obHeader["Assignment"] needs the selected User from the Create Screen
@@ -2267,10 +2302,10 @@ function syncUploadAzure(id, synctype) {
             function(transaction, results, rowsArray) {
               if (rowsArray.length > 0) {
                 if (syncDetails) {
-                  localStorage.setItem('LastSyncUploadDetails', localStorage.getItem('LastSyncUploadDetails') + ", ZPM3:" + String(rowsArray.length));
+                  localStorage.setItem('LastSyncUploadDetails', localStorage.getItem('LastSyncUploadDetails') + ", ZPM3:" + rowsArray.length);
                 } else {
                   syncDetails = true;
-                  setSyncUpload("ZPM3:" + String(rowsArray.length));
+                  setSyncUpload("ZPM3:" + rowsArray.length);
                 }
                 if (!syncDetsSet) {
                   syncDetsSet = true;
@@ -2288,54 +2323,56 @@ function syncUploadAzure(id, synctype) {
                   }
                 }
                 item = rowsArray[0];
-                opMessage("New ZPM3");
-
-                //header["UserId"] = localStorage.getItem('MobileUser');
-                //header["ShortText"] = item['shorttext'];
-
-                // myjson["Reportedby"] = localStorage.getItem('EmployeeID');
-                // myjson["NotifType"] = item['type'];
-                // myjson["ActStartDate"] = item['startdate'];
-                // myjson["ActStartTime"] = item['starttime'];
-                // myjson["ActEndDate"] = item['enddate'];
-                // myjson["ActEndTime"] = item['endtime'];
-                // myjson["User"] = localStorage.getItem('MobileUser');
 
 
-                var myjson = {};
-                myjson["Message"] = "";
-                myjson["MessageType"] = "";
-                myjson["ReportedBy"] = localStorage.getItem('EmployeeID');
+                // Introduce a Check against this item for ZPM3
+                html5sql.process("SELECT ordType from MyJobDets where orderid = '" + item['orderno'] + "'",
+                  function(transaction, results1, rowsArray1) {
+                      if (rowsArray1.length > 0 && rowsArray1[0].ordType === "ZPM3") {
+                        opMessage("New ZPM3");
+                        console.log('ZPM3');
+                        var myjson = {};
+                        myjson["Message"] = "";
+                        myjson["MessageType"] = "";
+                        myjson["ReportedBy"] = localStorage.getItem('EmployeeID');
+                        myjson["EqStatus"] = item['equipmentstatus'];
+                        myjson["NotifTyp"] = "Z9";
+                        myjson["OrderId"] = item['orderno'];
+                        myjson["Equipment"] = item['equipment'];
+                        myjson["ShortText"] = "";
+                        myjson["StartDate"] = "";
+                        myjson["StartTime"] = "";
+                        myjson["EndDate"] = "";
+                        myjson["EndTime"] = "";
+                        myjson["longText"] = item['longtext'];
 
+                        sapCalls += 1;
+                        n = rowsArray.length
+                        html5sql.process("UPDATE MyNotifications SET state = 'SENDING' WHERE id='" + item['id'] + "'",
+                          function() {
+                            postAzureData("ZGW_MAM30_011_CREATE_NEW_JOB", myjson, "UPDATE MyNotifications SET state = 'NEW' WHERE id='" + item['id'] + "'", item['id']);
+                          },
+                          function(error, statement) {
+                            opErrorMessage("Error: " + error.message + " when processing " + statement);
+                          }
+                        );
+                      } else {
+                        html5sql.process("UPDATE MyNotifications SET state = 'SENDING' WHERE id='" + item['id'] + "'",
+                          function() {
+                            console.log("Processed none ZPM3 Job");
+                          },
+                          function(error, statement) {
+                            opErrorMessage("Error: " + error.message + " when processing " + statement);
+                          }
+                        );
+                      }
 
-                // Check numbers here should need -1 then back to string
-                console.log("EQUIPMENT STATUS", item['equipmentstatus'])
-                myjson["EqStatus"] = item['equipmentstatus'];
-                myjson["NotifTyp"] = "Z9";
-                myjson["OrderId"] = item['orderno'];
-                myjson["Equipment"] = item['equipment'];
-                myjson["ShortText"] = "";
-                myjson["StartDate"] = "";
-                myjson["StartTime"] = "";
-                myjson["EndDate"] = "";
-                myjson["EndTime"] = "";
-                myjson["longText"] = item['longtext'];
-
-                sapCalls += 1;
-                n = rowsArray.length
-                html5sql.process("UPDATE MyNotifications SET state = 'SENDING' WHERE id='" + item['id'] + "'",
-                  function() {
-                    postAzureData("ZGW_MAM30_011_CREATE_NEW_JOB", myjson, "UPDATE MyNotifications SET state = 'NEW' WHERE id='" + item['id'] + "'", item['id']);
-                  },
-                  function(error, statement) {
+                  }, function(error, statement) {
                     opErrorMessage("Error: " + error.message + " when processing " + statement);
-                  }
-                );
+                  });
               }
-
             },
             function(error, statement) {
-
               opErrorMessage("Error: " + error.message + " when processing " + statement);
             });
         }
@@ -2419,74 +2456,73 @@ function syncUploadAzure(id, synctype) {
         }
         if (type == "ObjectList") // Process ObjectList
         {
+          // Only create the upload once even if we call this service 3 times
+
+
           html5sql.process("SELECT * from MyObjectListData where id = '" + id + "'",
-            function(transaction, results, rowsArray) {
-              if (rowsArray.length > 0) {
+                    function(transaction, results, rowsArray) {
+                      if (rowsArray.length > 0) {  if (syncDetails) {
+                          localStorage.setItem('LastSyncUploadDetails', localStorage.getItem('LastSyncUploadDetails') + ", ObjectList:" + String(rowsArray.length));
+                        }
+                        else {
+                          syncDetails = true;
+                          setSyncUpload("ObjectList:" + String(rowsArray.length));
+                        }
+                        if (!syncDetsSet) {
+                          syncDetsSet = true;
+                          SetLastSyncDetails("LASTSYNC_UPLOAD");
 
-                if (syncDetails) {
-                  localStorage.setItem('LastSyncUploadDetails', localStorage.getItem('LastSyncUploadDetails') + ", ObjectList:" + String(rowsArray.length));
-                } else {
-                  syncDetails = true;
-                  setSyncUpload("ObjectList:" + String(rowsArray.length));
-                }
-                if (!syncDetsSet) {
-                  syncDetsSet = true;
-                  SetLastSyncDetails("LASTSYNC_UPLOAD");
+                        }
 
-                }
+                        item = rowsArray[0];
+                        var myjson = {};
+                        myjson["Message"] = "";
+                        myjson["MessageType"] = "";
+                        myjson["OrderId"] = item['orderid'];
+                        myjson["UserId"] = localStorage.getItem('MobileUser');
 
+                        html5sql.process("SELECT * from MyObjectListData where orderid = '" + item['orderid'] + "'",
+                        // SUCCESS
+                        function(transaction, results, rowsArray2){
+                          var builtList = $.Deferred();
+                          _createObjectList(rowsArray2,[],builtList);
 
-                for (i = 0; i < rowsArray.length; i++) {
-                  rowsArray[i].counter = (rowsArray[i].counter).trim();
-                  if (rowsArray[i].checked == "true") {
-                    rowsArray[i].checked = 'X';
-                  } else {
-                    rowsArray[i].checked = '';
-                  }
-                }
-                item = rowsArray[0];
-                var myjson = {};
-                myjson["Message"] = "";
-                myjson["MessageType"] = "";
-                myjson["OrderId"] = item['orderid'];
-                myjson["UserId"] = localStorage.getItem('MobileUser');
+                          $.when(builtList).then(function(listed){
+                            myjson["toObjList"] = listed;
+                            console.log('MYJSON',myjson);
+                            html5sql.process("UPDATE MyObjectListData SET state = 'SENDING' WHERE id='" + item['id'] + "'",
+                              function() {
+                                if(bUpload && seanSentArray.indexOf(item.orderid) === -1){
+                                  seanSentArray.push(item.orderid);
+                                  console.log(seanSentArray);
+                                  sap.ui.getCore().setModel(new sap.ui.model.json.JSONModel({id:item.id,type:null}),'seanListedModel');
+                                  postAzureData("ZGW_MAM30_OBJLIST", myjson, "UPDATE MyObjectListData SET state = 'NEW' WHERE id='" + item['id'] + "'", item['id']);
+                                }else{
+                                  console.log('not Uploading')
+                                }
 
-                var toObjectList = [];
-                var counter = item['counter'].trim()
-                if (parseInt(counter, 10) < 10) {
-                  counter = "0" + counter;
-                }
+                              },
+                              function(error, statement) {
 
-                toObjectList.push([{
-                  "OrderId": item['orderid'],
-                  "Counter": counter,
-                  "SortField": item['sapcode'],
-                  "ProcessingInd": item['checked']
-                }])
-                myjson["toObjList"] = toObjectList;
+                                opMessage("Error: " + error.message + " when processing " + statement);
+                              }
+                            );
+                          })
+                        },
+                        // FAIL
+                        function(error, statement) {
 
-                //postAzureData("ZGW_MAM30_OBJLIST", myjson)
-
-                sapCalls += 1;
-                n = rowsArray.length
-                html5sql.process("UPDATE MyObjectListData SET state = 'SENDING' WHERE id='" + item['id'] + "'",
-                  function() {
-                    postAzureData("ZGW_MAM30_OBJLIST", myjson, "UPDATE MyObjectListData SET state = 'NEW' WHERE id='" + item['id'] + "'", item['id']);
-
-                  },
-                  function(error, statement) {
-
-                    opMessage("Error: " + error.message + " when processing " + statement);
-                  }
-                );
+                          opMessage("Error: " + error.message + " when processing " + statement);
+                        });
+                      }
+                    },
+                    function(error, statement) {
+                      opMessage("Error: " + error.message + " when processing " + statement);
+                    }
+                  );
               }
 
-            },
-            function(error, statement) {
 
-              opMessage("Error: " + error.message + " when processing " + statement);
-            });
-        }
         //changes for CREOL
         if (type == "EquipmentStatus") // Process New Notifications
         {
@@ -2608,16 +2644,10 @@ function syncUploadAzure(id, synctype) {
                 if (!syncDetsSet) {
                   syncDetsSet = true;
                   SetLastSyncDetails("LASTSYNC_UPLOAD");
-
                 }
-
-
-
-
                 item = rowsArray[0];
                 var myjson = {};
                 myjson["Message"] = "";
-
                 myjson["UserId"] = localStorage.getItem('MobileUser');
                 myjson["ActTime"] = item['acttime'];
                 myjson["ActDate"] = item['actdate'].substring(8, 10) + "." + item['actdate'].substring(5, 7) + "." + item['actdate'].substring(0, 4);
@@ -2631,7 +2661,11 @@ function syncUploadAzure(id, synctype) {
                 n = rowsArray.length
                 html5sql.process("UPDATE MyStatus SET state = 'SENDING' where id='" + item['id'] + "'",
                   function() {
-                    postAzureData("ZGW_MAM30_SET_OP_STATUS_ORDER", myjson, "UPDATE MyStatus SET state = 'NEW' where id='" + item['id'] + "'", item['id'])
+                    if(postedStatus !== item.status || postedId !== item.id){
+                      postedStatus = item.status;
+                      postedId = item.id;
+                      postAzureData("ZGW_MAM30_SET_OP_STATUS_ORDER", myjson, "UPDATE MyStatus SET state = 'NEW' where id='" + item['id'] + "'", item['id'])
+                    }
 
 
                   },
